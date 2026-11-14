@@ -2,7 +2,7 @@ package ru.kotletkin.totleben.simulation;
 
 import org.apache.commons.csv.CSVFormat;
 import ru.kotletkin.totleben.map.TrackGeoJson;
-import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
+import ru.kotletkin.totleben.map.GeoJsonResponse;
 import org.apache.commons.csv.CSVParser;
 import org.junit.jupiter.api.Test;
 

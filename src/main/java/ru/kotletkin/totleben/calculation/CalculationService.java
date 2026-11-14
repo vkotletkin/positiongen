@@ -11,8 +11,8 @@ import ru.kotletkin.totleben.calculation.mapper.CalculationMapper;
 import ru.kotletkin.totleben.calculation.model.CalculationRequest;
 import ru.kotletkin.totleben.calculation.model.CalculationStatus;
 import ru.kotletkin.totleben.calculation.repository.CalculationRequestRepository;
-import ru.kotletkin.totleben.result.dto.StoredArtifacts;
-import ru.kotletkin.totleben.result.model.CalculationResult;
+import ru.kotletkin.totleben.result.StoredArtifacts;
+import ru.kotletkin.totleben.result.CalculationResult;
 import ru.kotletkin.totleben.simulation.SimulationRequest;
 
 import java.time.Instant;

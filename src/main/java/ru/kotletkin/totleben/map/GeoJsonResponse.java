@@ -1,4 +1,4 @@
-package ru.kotletkin.totleben.map.dto;
+package ru.kotletkin.totleben.map;
 
 import java.util.List;
 import java.util.Map;

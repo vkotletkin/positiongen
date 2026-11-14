@@ -2,7 +2,6 @@ package ru.kotletkin.totleben.map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
 
 import java.io.IOException;
 import java.io.InputStream;

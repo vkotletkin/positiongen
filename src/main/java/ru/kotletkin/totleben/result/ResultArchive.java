@@ -1,6 +1,5 @@
 package ru.kotletkin.totleben.result;
 
-import ru.kotletkin.totleben.result.dto.StoredArtifacts;
 import ru.kotletkin.totleben.simulation.SimulationOutput;
 
 import java.io.InputStream;

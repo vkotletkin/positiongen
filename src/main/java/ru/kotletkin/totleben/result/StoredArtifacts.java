@@ -1,4 +1,4 @@
-package ru.kotletkin.totleben.result.dto;
+package ru.kotletkin.totleben.result;
 
 public record StoredArtifacts(
         String xyObjectKey,

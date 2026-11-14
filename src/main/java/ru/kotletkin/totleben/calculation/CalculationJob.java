@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.kotletkin.totleben.result.ResultArchive;
-import ru.kotletkin.totleben.result.dto.StoredArtifacts;
+import ru.kotletkin.totleben.result.StoredArtifacts;
 import ru.kotletkin.totleben.simulation.FractalRabbitCalculator;
 import ru.kotletkin.totleben.simulation.SimulationOutput;
 

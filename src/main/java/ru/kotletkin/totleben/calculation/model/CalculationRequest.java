@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.kotletkin.totleben.result.model.CalculationResult;
+import ru.kotletkin.totleben.result.CalculationResult;
 
 import java.time.Instant;
 import java.util.UUID;

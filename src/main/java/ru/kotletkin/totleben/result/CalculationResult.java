@@ -1,4 +1,4 @@
-package ru.kotletkin.totleben.result.model;
+package ru.kotletkin.totleben.result;
 
 import jakarta.persistence.*;
 import lombok.Getter;

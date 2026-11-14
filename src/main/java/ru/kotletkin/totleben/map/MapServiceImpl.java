@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import ru.kotletkin.totleben.exception.StorageException;
-import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
 import ru.kotletkin.totleben.result.ResultArchive;
-import ru.kotletkin.totleben.result.dto.StoredArtifacts;
+import ru.kotletkin.totleben.result.StoredArtifacts;
 
 import java.io.IOException;
 import java.io.InputStream;

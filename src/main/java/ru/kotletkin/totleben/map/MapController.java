@@ -1,4 +1,4 @@
-package ru.kotletkin.totleben.map.controller;
+package ru.kotletkin.totleben.map;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kotletkin.totleben.map.MapService;
-import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
 
 import java.util.UUID;
 

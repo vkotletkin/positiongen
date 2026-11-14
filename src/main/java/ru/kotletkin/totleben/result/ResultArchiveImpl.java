@@ -7,8 +7,6 @@ import ru.kotletkin.totleben.calculation.model.CalculationStatus;
 import ru.kotletkin.totleben.calculation.repository.CalculationRequestRepository;
 import ru.kotletkin.totleben.exception.CalculationNotReadyException;
 import ru.kotletkin.totleben.exception.StorageException;
-import ru.kotletkin.totleben.result.dto.StoredArtifacts;
-import ru.kotletkin.totleben.result.model.CalculationResult;
 import ru.kotletkin.totleben.simulation.SimulationOutput;
 import ru.kotletkin.totleben.storage.ObjectStorageService;
 
