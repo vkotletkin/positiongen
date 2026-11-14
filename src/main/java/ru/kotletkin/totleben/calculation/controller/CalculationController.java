@@ -11,7 +11,6 @@ import ru.kotletkin.totleben.calculation.CalculationLauncher;
 import ru.kotletkin.totleben.calculation.CalculationService;
 import ru.kotletkin.totleben.calculation.dto.CalculationDTO;
 import ru.kotletkin.totleben.calculation.dto.CalculationRequestDTO;
-import ru.kotletkin.totleben.config.openapi.ApiStandardErrorResponses;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/calculations")
 @RequiredArgsConstructor
-@ApiStandardErrorResponses
 @Tag(name = "Calculations", description = "Запросы на расчёт и их метаданные")
 public class CalculationController {
 

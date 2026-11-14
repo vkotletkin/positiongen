@@ -15,14 +15,22 @@ spring:
           time_zone: UTC
   thymeleaf:
     cache: false
+  cloud:
+    aws:
+      credentials:
+        access-key: totleben
+        secret-key: totleben-secret
+      region:
+        static: us-east-1
+      s3:
+        endpoint: http://localhost:8333
+        region: us-east-1
+        path-style-access-enabled: true
+        chunked-encoding-enabled: false
 
 totleben:
   storage:
-    endpoint: http://localhost:8333
-    region: us-east-1
     bucket: totleben-results
-    access-key: totleben
-    secret-key: totleben-secret
   map:
     origin-latitude: 44.605
     origin-longitude: 33.522

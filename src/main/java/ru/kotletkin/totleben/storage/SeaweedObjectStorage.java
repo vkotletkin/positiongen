@@ -1,6 +1,7 @@
 package ru.kotletkin.totleben.storage;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import ru.kotletkin.totleben.exception.StorageException;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -12,12 +13,22 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 @Component
-@RequiredArgsConstructor
+@EnableConfigurationProperties(StorageProperties.class)
 public class SeaweedObjectStorage implements ObjectStorage {
 
     private final S3Client client;
     private final StorageProperties properties;
+    private final String endpoint;
     private boolean bucketReady;
+
+    public SeaweedObjectStorage(
+            final S3Client client,
+            final StorageProperties properties,
+            @Value("${spring.cloud.aws.s3.endpoint}") final String endpoint) {
+        this.client = client;
+        this.properties = properties;
+        this.endpoint = endpoint;
+    }
 
     @Override
     public void put(final String key, final Path file, final String contentType) {
@@ -64,7 +75,7 @@ public class SeaweedObjectStorage implements ObjectStorage {
                     throw storageFailure("Не удалось открыть бакет SeaweedFS", ex);
                 }
             } catch (SdkClientException ex) {
-                throw storageFailure("SeaweedFS недоступен по адресу " + properties.endpoint(), ex);
+                throw storageFailure("SeaweedFS недоступен по адресу " + endpoint, ex);
             }
             bucketReady = true;
         }
@@ -78,7 +89,7 @@ public class SeaweedObjectStorage implements ObjectStorage {
                 throw storageFailure("Не удалось создать бакет SeaweedFS", ex);
             }
         } catch (SdkClientException ex) {
-            throw storageFailure("SeaweedFS недоступен по адресу " + properties.endpoint(), ex);
+            throw storageFailure("SeaweedFS недоступен по адресу " + endpoint, ex);
         }
     }
 

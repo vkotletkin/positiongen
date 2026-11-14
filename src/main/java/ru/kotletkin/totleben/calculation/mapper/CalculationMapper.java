@@ -1,45 +1,26 @@
 package ru.kotletkin.totleben.calculation.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import ru.kotletkin.totleben.calculation.dto.CalculationDTO;
 import ru.kotletkin.totleben.calculation.model.CalculationRequest;
-import ru.kotletkin.totleben.result.model.CalculationResult;
+import ru.kotletkin.totleben.calculation.model.CalculationStatus;
 import ru.kotletkin.totleben.simulation.SimulationRequest;
 
-@Component
-public class CalculationMapper {
+@Mapper(componentModel = "spring")
+public interface CalculationMapper {
 
-    public CalculationDTO toDto(final CalculationRequest request) {
-        CalculationResult result = request.getResult();
-        return new CalculationDTO(
-                request.getId(),
-                request.getLabel(),
-                request.getStatus(),
-                request.getStatus().title(),
-                request.getDimension(),
-                request.getFractalDimension(),
-                request.getPointCount(),
-                request.getTravelerCount(),
-                request.getCoTravelerCount(),
-                request.getDays(),
-                request.getMeanReportCount(),
-                request.getCreatedAt(),
-                request.getStartedAt(),
-                request.getFinishedAt(),
-                request.getErrorMessage(),
-                result == null ? null : result.getReportCount(),
-                result == null ? null : result.getXyByteSize(),
-                result == null ? null : result.getPlacesByteSize());
-    }
+    @Mapping(target = "statusTitle", source = "status", qualifiedByName = "statusTitle")
+    @Mapping(target = "reportCount", source = "result.reportCount")
+    @Mapping(target = "xyByteSize", source = "result.xyByteSize")
+    @Mapping(target = "placesByteSize", source = "result.placesByteSize")
+    CalculationDTO toDto(CalculationRequest request);
 
-    public SimulationRequest toSimulationRequest(final CalculationRequest request) {
-        return new SimulationRequest(
-                request.getDimension(),
-                request.getFractalDimension(),
-                request.getPointCount(),
-                request.getTravelerCount(),
-                request.getCoTravelerCount(),
-                request.getDays(),
-                request.getMeanReportCount());
+    SimulationRequest toSimulationRequest(CalculationRequest request);
+
+    @Named("statusTitle")
+    default String statusTitle(final CalculationStatus status) {
+        return status == null ? null : status.title();
     }
 }

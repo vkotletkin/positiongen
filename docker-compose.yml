@@ -7,7 +7,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/totleben
       SPRING_DATASOURCE_USERNAME: totleben
       SPRING_DATASOURCE_PASSWORD: totleben
-      TOTLEBEN_STORAGE_ENDPOINT: http://seaweedfs:8333
+      SPRING_CLOUD_AWS_S3_ENDPOINT: http://seaweedfs:8333
     depends_on:
       postgres:
         condition: service_healthy

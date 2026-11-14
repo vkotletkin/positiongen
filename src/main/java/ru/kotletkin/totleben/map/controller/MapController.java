@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kotletkin.totleben.config.openapi.ApiStandardErrorResponses;
 import ru.kotletkin.totleben.map.MapService;
 import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/calculations/{id}/geojson")
 @RequiredArgsConstructor
-@ApiStandardErrorResponses
 @Tag(name = "Map", description = "Отрисовка результатов на карте")
 public class MapController {
 

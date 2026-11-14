@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import ru.kotletkin.totleben.config.openapi.ApiStandardErrorResponses;
 import ru.kotletkin.totleben.result.ResultArchive;
 import ru.kotletkin.totleben.result.dto.StoredArtifacts;
 import ru.kotletkin.totleben.result.dto.StoredObjectDTO;
@@ -22,7 +21,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/calculations/{id}/files")
 @RequiredArgsConstructor
-@ApiStandardErrorResponses
 @Tag(name = "Results", description = "Файлы результатов расчёта")
 public class ResultFileController {
 
