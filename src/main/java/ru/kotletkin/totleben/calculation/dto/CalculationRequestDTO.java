@@ -1,13 +1,9 @@
 package ru.kotletkin.totleben.calculation.dto;
 
-import jakarta.validation.constraints.DecimalMax;
-import ru.kotletkin.totleben.calculation.validation.ConsistentCalculation;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.kotletkin.totleben.calculation.validation.ConsistentCalculation;
 
 @Getter
 @Setter

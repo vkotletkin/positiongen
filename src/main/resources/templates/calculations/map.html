@@ -15,7 +15,8 @@
         <p id="status-panel" th:text="${calculation.statusTitle}" th:attr="data-status=${calculation.status}"></p>
         <p id="report-count" th:text="${calculation.reportCount != null ? 'Отчётов: ' + calculation.reportCount : ''}"
            th:hidden="${calculation.reportCount == null}"></p>
-        <p id="notice" class="notice" th:text="${calculation.errorMessage}" th:hidden="${calculation.errorMessage == null}"></p>
+        <p id="notice" class="notice" th:text="${calculation.errorMessage}"
+           th:hidden="${calculation.errorMessage == null}"></p>
         <ul class="meta">
             <li th:text="|Размерность ${calculation.dimension}, фрактальная ${calculation.fractalDimension}|"></li>
             <li th:text="|Мест ${calculation.pointCount}|"></li>
@@ -28,7 +29,8 @@
             <a class="button secondary" th:href="@{|/api/calculations/${calculation.id}/files/places|}">PLACES.csv</a>
         </div>
         <div id="legend"></div>
-        <p class="hint">Координаты модели — километры по первым двум осям. На карте они сдвинуты от точки привязки, чтобы линии было куда положить.</p>
+        <p class="hint">Координаты модели — километры по первым двум осям. На карте они сдвинуты от точки привязки,
+            чтобы линии было куда положить.</p>
     </aside>
     <div id="map"
          th:data-id="${calculation.id}"

@@ -1,17 +1,10 @@
 package ru.kotletkin.totleben.calculation.model;
 
-import jakarta.persistence.CascadeType;
-import ru.kotletkin.totleben.result.model.CalculationResult;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.kotletkin.totleben.result.model.CalculationResult;
 
 import java.time.Instant;
 import java.util.UUID;

@@ -1,20 +1,15 @@
 package ru.kotletkin.totleben.map;
 
-import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import ru.kotletkin.totleben.map.dto.GeoJsonResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class TrackGeoJson {
 
@@ -25,10 +20,10 @@ public final class TrackGeoJson {
     }
 
     public static GeoJsonResponse fromCsv(InputStream csv,
-                                           int storedReportCount,
-                                           double originLatitude,
-                                           double originLongitude,
-                                           int maxPoints) throws IOException {
+                                          int storedReportCount,
+                                          double originLatitude,
+                                          double originLongitude,
+                                          int maxPoints) throws IOException {
         Map<Integer, List<Report>> grouped = new LinkedHashMap<>();
         int kept = 0;
         boolean truncated = false;

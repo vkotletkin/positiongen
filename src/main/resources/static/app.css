@@ -12,7 +12,9 @@
     --shadow: 0 12px 40px rgba(48, 36, 22, 0.08);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
@@ -22,7 +24,9 @@ body {
     line-height: 1.45;
 }
 
-a { color: var(--accent); }
+a {
+    color: var(--accent);
+}
 
 h1, h2 {
     font-family: Palatino, "Palatino Linotype", Georgia, serif;
@@ -64,9 +68,14 @@ h1, h2 {
     box-shadow: var(--shadow);
 }
 
-.panel, .side { padding: 18px 18px 20px; }
+.panel, .side {
+    padding: 18px 18px 20px;
+}
 
-form { display: grid; gap: 12px; }
+form {
+    display: grid;
+    gap: 12px;
+}
 
 label {
     display: grid;
@@ -110,15 +119,27 @@ button, .button {
     font-size: 0.82rem;
 }
 
-.hint, details { color: var(--muted); font-size: 0.88rem; }
+.hint, details {
+    color: var(--muted);
+    font-size: 0.88rem;
+}
 
-details { margin-top: 8px; }
+details {
+    margin-top: 8px;
+}
 
-details ul { padding-left: 18px; }
+details ul {
+    padding-left: 18px;
+}
 
-.table-wrap { overflow: auto; }
+.table-wrap {
+    overflow: auto;
+}
 
-table { width: 100%; border-collapse: collapse; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
 th, td {
     padding: 12px 14px;
@@ -128,7 +149,10 @@ th, td {
     font-size: 0.92rem;
 }
 
-th { color: var(--muted); font-weight: 600; }
+th {
+    color: var(--muted);
+    font-weight: 600;
+}
 
 .status {
     display: inline-block;
@@ -138,11 +162,25 @@ th { color: var(--muted); font-weight: 600; }
     color: var(--wait);
 }
 
-tr[data-status="SUCCEEDED"] .status { background: #e5f2eb; color: var(--ok); }
-tr[data-status="RUNNING"] .status, #status-panel[data-status="RUNNING"] { background: #f8ecd8; color: var(--run); }
-tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] { background: #f8e4e1; color: var(--bad); }
+tr[data-status="SUCCEEDED"] .status {
+    background: #e5f2eb;
+    color: var(--ok);
+}
 
-.empty { padding: 18px; color: var(--muted); }
+tr[data-status="RUNNING"] .status, #status-panel[data-status="RUNNING"] {
+    background: #f8ecd8;
+    color: var(--run);
+}
+
+tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] {
+    background: #f8e4e1;
+    color: var(--bad);
+}
+
+.empty {
+    padding: 18px;
+    color: var(--muted);
+}
 
 .map-page {
     display: grid;
@@ -159,11 +197,19 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] { backgrou
     overflow: auto;
 }
 
-.side h1 { margin: 0 0 8px; font-size: 1.8rem; }
+.side h1 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+}
 
-.meta { margin: 0 0 14px; padding-left: 18px; }
+.meta {
+    margin: 0 0 14px;
+    padding-left: 18px;
+}
 
-.meta li { margin: 4px 0; }
+.meta li {
+    margin: 4px 0;
+}
 
 #status-panel {
     display: inline-block;
@@ -181,9 +227,20 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] { backgrou
     color: var(--run);
 }
 
-.downloads { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.downloads {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
 
-#legend { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow: auto; }
+#legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 240px;
+    overflow: auto;
+}
 
 #legend button {
     justify-content: flex-start;
@@ -194,7 +251,10 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] { backgrou
     border-radius: 8px;
 }
 
-#map { min-height: 100vh; background: #d5e3dc; }
+#map {
+    min-height: 100vh;
+    background: #d5e3dc;
+}
 
 .footer {
     margin-top: 22px;
@@ -203,8 +263,20 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] { backgrou
 }
 
 @media (max-width: 860px) {
-    .layout, .map-page { grid-template-columns: 1fr; }
-    .masthead { display: block; }
-    #map { min-height: 70vh; }
-    .side { border-right: 0; border-bottom: 1px solid var(--line); }
+    .layout, .map-page {
+        grid-template-columns: 1fr;
+    }
+
+    .masthead {
+        display: block;
+    }
+
+    #map {
+        min-height: 70vh;
+    }
+
+    .side {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
 }

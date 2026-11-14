@@ -6,7 +6,7 @@ const legend = document.getElementById("legend");
 const downloads = document.getElementById("downloads");
 const reportCount = document.getElementById("report-count");
 
-const map = L.map(root, { scrollWheelZoom: true });
+const map = L.map(root, {scrollWheelZoom: true});
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap"
@@ -73,7 +73,7 @@ async function draw() {
         const stroke = color(travelerId);
         if (feature.geometry.type === "LineString") {
             const latLngs = feature.geometry.coordinates.map(([lon, lat]) => [lat, lon]);
-            const line = L.polyline(latLngs, { color: stroke, weight: 3, opacity: 0.9 }).addTo(layers);
+            const line = L.polyline(latLngs, {color: stroke, weight: 3, opacity: 0.9}).addTo(layers);
             travelerLines.set(travelerId, line);
             latLngs.forEach((point) => bounds.push(point));
         } else if (feature.geometry.type === "Point") {
@@ -102,7 +102,7 @@ async function draw() {
         item.addEventListener("click", () => {
             const lineBounds = line.getBounds();
             if (lineBounds.isValid()) {
-                map.fitBounds(lineBounds, { padding: [24, 24], maxZoom: 14 });
+                map.fitBounds(lineBounds, {padding: [24, 24], maxZoom: 14});
             }
         });
         legend.appendChild(item);
@@ -110,7 +110,7 @@ async function draw() {
     if (bounds.length === 1) {
         map.setView(bounds[0], 12);
     } else if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [28, 28], maxZoom: 14 });
+        map.fitBounds(bounds, {padding: [28, 28], maxZoom: 14});
     }
 }
 

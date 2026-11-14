@@ -1,8 +1,9 @@
 package ru.kotletkin.totleben.calculation.repository;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.EntityGraph;
-import ru.kotletkin.totleben.calculation.model.CalculationRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import ru.kotletkin.totleben.calculation.model.CalculationRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,8 @@ public interface CalculationRequestRepository extends JpaRepository<CalculationR
 
     @Override
     @EntityGraph(attributePaths = "result")
-    Optional<CalculationRequest> findById(UUID id);
+    @NonNull
+    Optional<CalculationRequest> findById(@NonNull UUID id);
 
     @EntityGraph(attributePaths = "result")
     List<CalculationRequest> findAllByOrderByCreatedAtDesc();

@@ -11,14 +11,16 @@
     <header class="masthead">
         <div>
             <h1>Тотлебен</h1>
-            <p>Синтетические маршруты FRACTALRABBIT. Параметры запроса и метаданные результата хранятся в Postgres, сами CSV — в SeaweedFS.</p>
+            <p>Синтетические маршруты FRACTALRABBIT. Параметры запроса и метаданные результата хранятся в Postgres, сами
+                CSV — в SeaweedFS.</p>
         </div>
     </header>
 
     <div class="layout">
         <section class="panel">
             <h2>Новый запрос</h2>
-            <p class="hint">Числа по умолчанию небольшие, чтобы карта открылась быстро. Пример из parameters.csv: 5000 точек, 3000 путешественников, 200 отчётов — это уже долгий расчёт.</p>
+            <p class="hint">Числа по умолчанию небольшие, чтобы карта открылась быстро. Пример из parameters.csv: 5000
+                точек, 3000 путешественников, 200 отчётов — это уже долгий расчёт.</p>
             <form th:object="${form}" method="post" th:action="@{/calculations}">
                 <label>Название
                     <input type="text" th:field="*{label}" maxlength="200" placeholder="Необязательно">
@@ -97,7 +99,8 @@
                         <div class="error" th:if="${item.errorMessage != null}" th:text="${item.errorMessage}"></div>
                     </td>
                     <td><span class="status" th:text="${item.statusTitle}"></span></td>
-                    <td class="hint" th:text="|${item.dimension}D, h=${item.fractalDimension}, мест ${item.pointCount}, путешественников ${item.travelerCount}, попутчиков ${item.coTravelerCount}, ${item.days} сут|"></td>
+                    <td class="hint"
+                        th:text="|${item.dimension}D, h=${item.fractalDimension}, мест ${item.pointCount}, путешественников ${item.travelerCount}, попутчиков ${item.coTravelerCount}, ${item.days} сут|"></td>
                     <td th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
                     <td><a th:href="@{|/calculations/${item.id}/map|}">Карта</a></td>
                 </tr>
