@@ -114,4 +114,4 @@ async function draw() {
     }
 }
 
-poll();
+await poll();

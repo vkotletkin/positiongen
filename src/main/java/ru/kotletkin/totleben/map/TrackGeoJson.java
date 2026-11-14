@@ -28,21 +28,20 @@ public final class TrackGeoJson {
         int kept = 0;
         boolean truncated = false;
         try (Reader reader = new InputStreamReader(csv, StandardCharsets.UTF_8)) {
-            for (CSVRecord record : CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
+            for (CSVRecord row : CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
                 if (kept >= maxPoints) {
                     truncated = true;
                     break;
                 }
-                int travelerId = Integer.parseInt(record.get("ID"));
-                double days = Double.parseDouble(record.get("Days"));
-                double xKm = Double.parseDouble(record.get("x(km)"));
-                double yKm = Double.parseDouble(record.get("y(km)"));
-                if (!Double.isFinite(days) || !Double.isFinite(xKm) || !Double.isFinite(yKm)) {
-                    continue;
+                int travelerId = Integer.parseInt(row.get("ID"));
+                double days = Double.parseDouble(row.get("Days"));
+                double xKm = Double.parseDouble(row.get("x(km)"));
+                double yKm = Double.parseDouble(row.get("y(km)"));
+                if (Double.isFinite(days) && Double.isFinite(xKm) && Double.isFinite(yKm)) {
+                    grouped.computeIfAbsent(travelerId, _ -> new ArrayList<>())
+                            .add(new Report(travelerId, days, xKm, yKm));
+                    kept++;
                 }
-                grouped.computeIfAbsent(travelerId, ignored -> new ArrayList<>())
-                        .add(new Report(travelerId, days, xKm, yKm));
-                kept++;
             }
         }
 

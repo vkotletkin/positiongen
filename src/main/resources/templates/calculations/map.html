@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${calculation.label != null ? calculation.label : 'Карта'} + ' — Тотлебен'">Карта</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/app.css}">
 </head>
 <body>
 <div class="map-page">
     <aside class="side">
         <p><a th:href="@{/}">Все запросы</a></p>
-        <h1 th:text="${calculation.label != null ? calculation.label : 'Маршруты'}"></h1>
+        <h1 th:text="${calculation.label != null ? calculation.label : 'Маршруты'}">Маршруты</h1>
         <p id="status-panel" th:text="${calculation.statusTitle}" th:attr="data-status=${calculation.status}"></p>
         <p id="report-count" th:text="${calculation.reportCount != null ? 'Отчётов: ' + calculation.reportCount : ''}"
            th:hidden="${calculation.reportCount == null}"></p>
@@ -37,7 +39,9 @@
          th:data-origin-lat="${originLatitude}"
          th:data-origin-lon="${originLongitude}"></div>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script th:src="@{/map.js}"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="anonymous"></script>
+<script th:src="@{/map.js}" type="module"></script>
 </body>
 </html>

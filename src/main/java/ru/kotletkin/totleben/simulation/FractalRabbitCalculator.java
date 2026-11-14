@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
 
 /**
@@ -56,6 +57,8 @@ public class FractalRabbitCalculator {
      */
     static final double REPORT_ALPHA = -1.5;
 
+    private final Random random = new Random();
+
     public FixedParameters fixedParameters() {
         return new FixedParameters(
                 RESTART_RATE,
@@ -82,7 +85,6 @@ public class FractalRabbitCalculator {
 
         PoissonVariate phiRandom = new PoissonVariate(PHI_MEAN);
         PoissonVariate stepsRandom = new PoissonVariate(STEPS_MEAN);
-        Random startPoints = new Random();
         Map<Integer, Integer> trajectoryAssignment = assignTravelers(request.coTravelerCount(), request.travelerCount());
 
         int trajectoryCount = request.travelerCount() - request.coTravelerCount() + 1;
@@ -91,7 +93,7 @@ public class FractalRabbitCalculator {
             trajectories.add(retropreferential.trajectory(
                     phiRandom.generate(),
                     stepsRandom.generate(),
-                    startPoints.nextInt(request.pointCount())));
+                    random.nextInt(request.pointCount())));
         }
 
         PoissonVariate countRandom = new PoissonVariate(request.meanReportCount());
@@ -110,7 +112,7 @@ public class FractalRabbitCalculator {
             reportPlaces.put(assignment.getKey(), List.copyOf(reporter.getReportPlaces()));
         }
 
-        Path directory = Files.createTempDirectory("totleben-fractalrabbit-");
+        Path directory = createPrivateTempDirectory();
         Path xyCsv = directory.resolve("XY.csv");
         Path placesCsv = directory.resolve("PLACES.csv");
         try {
@@ -192,9 +194,15 @@ public class FractalRabbitCalculator {
     private static void deleteQuietly(Path path) {
         try {
             Files.deleteIfExists(path);
-        } catch (IOException ignored) {
+        } catch (IOException _) {
             // The calling failure is the one that should surface.
         }
+    }
+
+    private static Path createPrivateTempDirectory() throws IOException {
+        return Files.createTempDirectory(
+                "totleben-fractalrabbit-",
+                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
     }
 
     public record FixedParameters(

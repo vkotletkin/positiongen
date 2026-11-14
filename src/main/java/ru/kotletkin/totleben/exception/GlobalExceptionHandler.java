@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.kotletkin.totleben.exception.dto.ErrorResponse;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Slf4j
@@ -22,18 +23,22 @@ public class GlobalExceptionHandler {
 
     private static final String ERR_DESCRIPTION_EMPTY = "empty";
 
+    private static OffsetDateTime timestamp() {
+        return OffsetDateTime.now(ZoneOffset.UTC);
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(StorageException.class)
     public ErrorResponse handleOnStorageException(final StorageException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(OffsetDateTime.now(), e.getMessage(), ERR_DESCRIPTION_EMPTY);
+        return new ErrorResponse(timestamp(), e.getMessage(), ERR_DESCRIPTION_EMPTY);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(CalculationNotReadyException.class)
     public ErrorResponse handleOnCalculationNotReadyException(final CalculationNotReadyException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(OffsetDateTime.now(), "Calculation is not ready", e.getMessage());
+        return new ErrorResponse(timestamp(), "Calculation is not ready", e.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -42,12 +47,12 @@ public class GlobalExceptionHandler {
         log.error("Data integrity violation: {}", cause);
         if (cause != null && (cause.toLowerCase().contains("unique") || cause.toLowerCase().contains("duplicate"))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(
-                    OffsetDateTime.now(),
+                    timestamp(),
                     "Database constraint violation",
                     ERR_DESCRIPTION_EMPTY));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(
-                OffsetDateTime.now(),
+                timestamp(),
                 "Database constraint violation",
                 ERR_DESCRIPTION_EMPTY));
     }
@@ -56,14 +61,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ErrorResponse handleOnNotFoundException(final NotFoundException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(OffsetDateTime.now(), "Object not found", e.getMessage());
+        return new ErrorResponse(timestamp(), "Object not found", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     @ExceptionHandler(ConstraintViolationException.class)
     public List<ErrorResponse> handleOnConstraintValidationException(final ConstraintViolationException e) {
 
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = timestamp();
         final List<ErrorResponse> errorResponses = e.getConstraintViolations().stream()
                 .map(error -> new ErrorResponse(
                                 now,
@@ -82,7 +87,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public List<ErrorResponse> handleOnMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
 
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = timestamp();
         final List<ErrorResponse> errorResponses = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new ErrorResponse(now, error.getField(), error.getDefaultMessage()))
                 .toList();
@@ -96,7 +101,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ErrorResponse handleOnMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(OffsetDateTime.now(), e.getParameterName(), "Required request parameter is missing");
+        return new ErrorResponse(timestamp(), e.getParameterName(), "Required request parameter is missing");
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
@@ -104,6 +109,6 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleOnMissingRequestHeaderException(final MissingRequestHeaderException e) {
         log.error(e.getMessage());
         return new ErrorResponse(
-                OffsetDateTime.now(), "Ошибка передачи заголовка." + e.getHeaderName(), ERR_DESCRIPTION_EMPTY);
+                timestamp(), "Ошибка передачи заголовка." + e.getHeaderName(), ERR_DESCRIPTION_EMPTY);
     }
 }

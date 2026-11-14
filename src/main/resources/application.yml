@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/totleben
     username: totleben
-    password: totleben
+    password: ${SPRING_DATASOURCE_PASSWORD:totleben}
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +19,7 @@ spring:
     aws:
       credentials:
         access-key: totleben
-        secret-key: totleben-secret
+        secret-key: ${SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY:totleben-secret}"
       region:
         static: us-east-1
       s3:
