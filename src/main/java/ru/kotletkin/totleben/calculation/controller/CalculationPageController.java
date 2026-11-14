@@ -37,7 +37,7 @@ public class CalculationPageController {
             return list(model, form);
         }
         UUID id = launcher.launch(form).id();
-        return "redirect:/calculations/" + id + "/map";
+        return "redirect:/calculations/%s/map".formatted(id);
     }
 
     @GetMapping("/calculations/{id}/map")

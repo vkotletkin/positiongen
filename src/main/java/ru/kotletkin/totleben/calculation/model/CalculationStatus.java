@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CalculationStatus {
-    PENDING("Ожидает"),
-    RUNNING("Считается"),
-    SUCCEEDED("Готово"),
-    FAILED("Ошибка");
+    PENDING("PENDING"),
+    RUNNING("CALCULATING"),
+    SUCCEEDED("SUCCEEDED"),
+    FAILED("FAILED");
 
     private final String title;
 }

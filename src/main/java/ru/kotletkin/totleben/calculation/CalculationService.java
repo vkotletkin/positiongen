@@ -2,6 +2,7 @@ package ru.kotletkin.totleben.calculation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kotletkin.totleben.calculation.dto.CalculationDTO;
@@ -28,19 +29,11 @@ public class CalculationService {
     private final CalculationRequestRepository requests;
     private final CalculationMapper mapper;
 
-    private static String blankToNull(final String value) {
-        if (value == null) {
-            return null;
-        }
-        String trimmed = value.trim();
-        return trimmed.isEmpty() ? null : trimmed;
-    }
-
     @Transactional
     public UUID submit(final CalculationRequestDTO request) {
         CalculationRequest entity = new CalculationRequest();
         entity.setId(UUID.randomUUID());
-        entity.setLabel(blankToNull(request.getLabel()));
+        entity.setLabel(StringUtils.trimToEmpty(request.getLabel()));
         entity.setStatus(CalculationStatus.PENDING);
         entity.setDimension(request.getDimension());
         entity.setFractalDimension(request.getFractalDimension());
