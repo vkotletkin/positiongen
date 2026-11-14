@@ -4,31 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class SimulationOutput implements AutoCloseable {
-
-    private final Path directory;
-    private final Path xyCsv;
-    private final Path placesCsv;
-    private final int reportCount;
-
-    SimulationOutput(Path directory, Path xyCsv, Path placesCsv, int reportCount) {
-        this.directory = directory;
-        this.xyCsv = xyCsv;
-        this.placesCsv = placesCsv;
-        this.reportCount = reportCount;
-    }
-
-    public Path xyCsv() {
-        return xyCsv;
-    }
-
-    public Path placesCsv() {
-        return placesCsv;
-    }
-
-    public int reportCount() {
-        return reportCount;
-    }
+public record SimulationOutput(Path directory, Path xyCsv, Path placesCsv, int reportCount) implements AutoCloseable {
 
     @Override
     public void close() throws IOException {

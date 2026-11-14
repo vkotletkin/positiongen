@@ -10,7 +10,6 @@ import ru.kotletkin.totleben.exception.StorageException;
 import ru.kotletkin.totleben.result.dto.StoredArtifacts;
 import ru.kotletkin.totleben.result.model.CalculationResult;
 import ru.kotletkin.totleben.simulation.SimulationOutput;
-import ru.kotletkin.totleben.storage.ObjectStorage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,7 @@ import static ru.kotletkin.totleben.exception.NotFoundException.notFoundExceptio
 @RequiredArgsConstructor
 public class ResultArchiveImpl implements ResultArchive {
 
-    private final ObjectStorage objectStorage;
+    private final  objectStorage;
     private final CalculationRequestRepository requests;
 
     @Override

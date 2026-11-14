@@ -29,7 +29,7 @@ spring:
         chunked-encoding-enabled: false
         checksum-validation-enabled: false
 
-totleben:
+app:
   storage:
     bucket: totleben-results
   map:

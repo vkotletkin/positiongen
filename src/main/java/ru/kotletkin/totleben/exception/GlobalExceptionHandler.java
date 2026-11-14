@@ -21,7 +21,7 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final String ERR_DESCRIPTION_EMPTY = "empty";
+    private static final String ERR_DESCRIPTION_EMPTY = "Description is empty";
 
     private static OffsetDateTime timestamp() {
         return OffsetDateTime.now(ZoneOffset.UTC);
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(StorageException.class)
     public ErrorResponse handleOnStorageException(final StorageException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(timestamp(), e.getMessage(), ERR_DESCRIPTION_EMPTY);
+        return new ErrorResponse(timestamp(), "Storage error", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
