@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:totleben;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+totleben:
+  storage:
+    endpoint: http://localhost:8333
+    region: us-east-1
+    bucket: totleben-results
+    access-key: totleben
+    secret-key: totleben-secret
+  map:
+    origin-latitude: 44.605
+    origin-longitude: 33.522
+    max-points: 12000

@@ -1,0 +1,51 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/totleben
+      SPRING_DATASOURCE_USERNAME: totleben
+      SPRING_DATASOURCE_PASSWORD: totleben
+      TOTLEBEN_STORAGE_ENDPOINT: http://seaweedfs:8333
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_started
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: totleben
+      POSTGRES_USER: totleben
+      POSTGRES_PASSWORD: totleben
+    ports:
+      - "5432:5432"
+    volumes:
+      - totleben-pg:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U totleben -d totleben"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.13
+    ports:
+      - "8333:8333"
+      - "9333:9333"
+      - "8888:8888"
+    command:
+      - server
+      - -s3
+      - -dir=/data
+      - -ip.bind=0.0.0.0
+      - -s3.config=/etc/seaweedfs/s3.json
+    volumes:
+      - ./deploy/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
+      - totleben-seaweed:/data
+
+volumes:
+  totleben-pg:
+  totleben-seaweed:

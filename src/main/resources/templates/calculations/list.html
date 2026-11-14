@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Тотлебен</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+<body>
+<main class="page">
+    <header class="masthead">
+        <div>
+            <h1>Тотлебен</h1>
+            <p>Синтетические маршруты FRACTALRABBIT. Параметры запроса и метаданные результата хранятся в Postgres, сами CSV — в SeaweedFS.</p>
+        </div>
+    </header>
+
+    <div class="layout">
+        <section class="panel">
+            <h2>Новый запрос</h2>
+            <p class="hint">Числа по умолчанию небольшие, чтобы карта открылась быстро. Пример из parameters.csv: 5000 точек, 3000 путешественников, 200 отчётов — это уже долгий расчёт.</p>
+            <form th:object="${form}" method="post" th:action="@{/calculations}">
+                <label>Название
+                    <input type="text" th:field="*{label}" maxlength="200" placeholder="Необязательно">
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('label')}" th:errors="*{label}"></p>
+
+                <label>Размерность пространства
+                    <input type="number" th:field="*{dimension}" min="2" max="16" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('dimension')}" th:errors="*{dimension}"></p>
+
+                <label>Фрактальная размерность
+                    <input type="number" th:field="*{fractalDimension}" min="0.01" step="0.01" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('fractalDimension')}" th:errors="*{fractalDimension}"></p>
+
+                <label>Число мест
+                    <input type="number" th:field="*{pointCount}" min="1" max="20000" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('pointCount')}" th:errors="*{pointCount}"></p>
+
+                <label>Путешественники
+                    <input type="number" th:field="*{travelerCount}" min="1" max="5000" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('travelerCount')}" th:errors="*{travelerCount}"></p>
+
+                <label>Из них на одной траектории
+                    <input type="number" th:field="*{coTravelerCount}" min="0" max="5000" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('coTravelerCount')}" th:errors="*{coTravelerCount}"></p>
+
+                <label>Окно наблюдения, сутки
+                    <input type="number" th:field="*{days}" min="0.001" max="3650" step="0.1" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('days')}" th:errors="*{days}"></p>
+
+                <label>Среднее число отчётов
+                    <input type="number" th:field="*{meanReportCount}" min="0.001" max="1000" step="1" required>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('meanReportCount')}" th:errors="*{meanReportCount}"></p>
+
+                <button type="submit">Запустить расчёт</button>
+            </form>
+            <details>
+                <summary>Фиксированные параметры модели</summary>
+                <p>Эти величины заданы процедурой FRACTALRABBIT и в форму не вынесены.</p>
+                <ul>
+                    <li th:text="|Темп новых кластеров ${constants.restartRate}|"></li>
+                    <li th:text="|Показатель расстояния ${constants.distanceExponent}|"></li>
+                    <li th:text="|Предел скорости ${constants.maxKilometersPerHour} км/ч|"></li>
+                    <li th:text="|${constants.kilometersPerUnit} км на единицу модели|"></li>
+                    <li th:text="|Средняя длина траектории ${constants.stepsMean} шагов|"></li>
+                    <li th:text="|Средний параметр исследования ${constants.phiMean}|"></li>
+                    <li th:text="|Парето: нижняя граница ${constants.reportDelta}, хвост ${constants.reportAlpha}|"></li>
+                </ul>
+            </details>
+        </section>
+
+        <section class="table-wrap">
+            <p class="empty" th:if="${#lists.isEmpty(requests)}">Запросов пока нет.</p>
+            <table th:if="${not #lists.isEmpty(requests)}">
+                <thead>
+                <tr>
+                    <th>Запрос</th>
+                    <th>Статус</th>
+                    <th>Параметры</th>
+                    <th>Отчётов</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${requests}" th:attr="data-status=${item.status}">
+                    <td>
+                        <strong th:text="${item.label != null ? item.label : 'без названия'}"></strong>
+                        <div class="hint" th:text="${#temporals.format(item.createdAt, 'dd.MM.yyyy HH:mm')}"></div>
+                        <div class="error" th:if="${item.errorMessage != null}" th:text="${item.errorMessage}"></div>
+                    </td>
+                    <td><span class="status" th:text="${item.statusTitle}"></span></td>
+                    <td class="hint" th:text="|${item.dimension}D, h=${item.fractalDimension}, мест ${item.pointCount}, путешественников ${item.travelerCount}, попутчиков ${item.coTravelerCount}, ${item.days} сут|"></td>
+                    <td th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
+                    <td><a th:href="@{|/calculations/${item.id}/map|}">Карта</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <p class="footer">Расчёт — FRACTALRABBIT, R. W. R. Darling. Алгоритм генераторов не менялся.</p>
+</main>
+<script th:if="${requests.?[status.name() == 'PENDING' or status.name() == 'RUNNING'].size() > 0}">
+    window.setTimeout(() => window.location.reload(), 3000);
+</script>
+</body>
+</html>
