@@ -1,10 +1,10 @@
 package ru.kotletkin.totleben.storage;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.kotletkin.totleben.config.StorageConfig;
 import ru.kotletkin.totleben.exception.StorageException;
-import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -18,10 +18,21 @@ public class ObjectStorageService {
 
     private final S3Client client;
     private final StorageConfig storageConfig;
-    private boolean isBucketReady = false;
+
+    @PostConstruct
+    public void init() {
+        try {
+            client.headBucket(HeadBucketRequest.builder()
+                    .bucket(storageConfig.bucket())
+                    .build());
+        } catch (NoSuchBucketException _) {
+            createBucket();
+        } catch (SdkException ex) {
+            throw new StorageException("Failed to access object storage", ex);
+        }
+    }
 
     public void put(final String key, final Path file, final String contentType) {
-        ensureBucket();
         try {
             client.putObject(PutObjectRequest.builder()
                     .bucket(storageConfig.bucket())
@@ -44,34 +55,18 @@ public class ObjectStorageService {
         }
     }
 
-    private void ensureBucket() {
-        if (isBucketReady) {
-            return;
-        }
-        synchronized (this) {
-            if (isBucketReady) {
-                return;
-            }
-            try {
-                client.headBucket(HeadBucketRequest.builder().bucket(storageConfig.bucket()).build());
-            } catch (NoSuchBucketException _) {
-                createBucket();
-            } catch (SdkClientException ex) {
-                throw new StorageException("Failed to access to object storage", ex);
-            }
-            isBucketReady = true;
-        }
-    }
-
     private void createBucket() {
         try {
-            client.createBucket(CreateBucketRequest.builder().bucket(storageConfig.bucket()).build());
+            client.createBucket(CreateBucketRequest.builder()
+                    .bucket(storageConfig.bucket())
+                    .build());
         } catch (S3Exception ex) {
+            // 409 Conflict означает, что бакет уже был создан другим инстансом приложения при параллельном старте
             if (ex.statusCode() != 409) {
                 throw new StorageException("Cannot create bucket in object storage", ex);
             }
-        } catch (SdkClientException ex) {
-            throw new StorageException("Failed to access to object storage", ex);
+        } catch (SdkException ex) {
+            throw new StorageException("Failed to access object storage", ex);
         }
     }
 }
