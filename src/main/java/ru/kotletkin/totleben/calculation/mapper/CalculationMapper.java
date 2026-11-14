@@ -21,6 +21,6 @@ public interface CalculationMapper {
 
     @Named("statusTitle")
     default String statusTitle(final CalculationStatus status) {
-        return status == null ? null : status.title();
+        return status == null ? null : status.getTitle();
     }
 }

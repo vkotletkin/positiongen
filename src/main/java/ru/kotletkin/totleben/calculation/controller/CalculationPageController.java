@@ -32,9 +32,7 @@ public class CalculationPageController {
     }
 
     @PostMapping("/calculations")
-    public String submit(@Valid @ModelAttribute("form") final CalculationRequestDTO form,
-                         final BindingResult errors,
-                         final Model model) {
+    public String submit(@Valid @ModelAttribute("form") final CalculationRequestDTO form, final BindingResult errors, final Model model) {
         if (errors.hasErrors()) {
             return list(model, form);
         }

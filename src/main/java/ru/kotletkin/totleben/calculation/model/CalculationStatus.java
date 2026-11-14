@@ -1,5 +1,10 @@
 package ru.kotletkin.totleben.calculation.model;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum CalculationStatus {
     PENDING("Ожидает"),
     RUNNING("Считается"),
@@ -7,12 +12,4 @@ public enum CalculationStatus {
     FAILED("Ошибка");
 
     private final String title;
-
-    CalculationStatus(String title) {
-        this.title = title;
-    }
-
-    public String title() {
-        return title;
-    }
 }

@@ -66,7 +66,7 @@ public class SeaweedObjectStorage implements ObjectStorage {
             }
             try {
                 client.headBucket(HeadBucketRequest.builder().bucket(properties.bucket()).build());
-            } catch (NoSuchBucketException ex) {
+            } catch (NoSuchBucketException _) {
                 createBucket();
             } catch (S3Exception ex) {
                 if (ex.statusCode() == 404) {

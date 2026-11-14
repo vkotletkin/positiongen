@@ -11,12 +11,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CalculationLauncher {
 
-    private final CalculationService calculations;
-    private final CalculationJob job;
+    private final CalculationService calculationService;
+    private final CalculationJob calculationJob;
 
     public CalculationDTO launch(final CalculationRequestDTO request) {
-        UUID id = calculations.submit(request);
-        job.execute(id);
-        return calculations.get(id);
+        UUID id = calculationService.submit(request);
+        calculationJob.execute(id);
+        return calculationService.get(id);
     }
 }

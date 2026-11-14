@@ -22,25 +22,25 @@ import java.util.UUID;
 @Tag(name = "Calculations", description = "Запросы на расчёт и их метаданные")
 public class CalculationController {
 
-    private final CalculationService calculations;
-    private final CalculationLauncher launcher;
+    private final CalculationService calculationService;
+    private final CalculationLauncher calculationLauncher;
 
     @GetMapping
     @Operation(summary = "List calculations")
-    public List<CalculationDTO> list() {
-        return calculations.list();
+    public List<CalculationDTO> listCalculations() {
+        return calculationService.list();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create calculation")
-    public CalculationDTO create(@Valid @RequestBody final CalculationRequestDTO request) {
-        return launcher.launch(request);
+    public CalculationDTO createCalculation(@Valid @RequestBody final CalculationRequestDTO request) {
+        return calculationLauncher.launch(request);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get calculation")
-    public CalculationDTO get(@PathVariable final UUID id) {
-        return calculations.get(id);
+    public CalculationDTO getCalculation(@PathVariable final UUID id) {
+        return calculationService.get(id);
     }
 }

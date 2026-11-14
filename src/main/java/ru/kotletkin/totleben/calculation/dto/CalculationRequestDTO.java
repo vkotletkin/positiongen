@@ -1,12 +1,10 @@
 package ru.kotletkin.totleben.calculation.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import ru.kotletkin.totleben.calculation.validation.ConsistentCalculation;
 
-@Getter
-@Setter
+@Data
 @ConsistentCalculation
 public class CalculationRequestDTO {
 

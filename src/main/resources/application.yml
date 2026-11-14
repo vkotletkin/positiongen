@@ -27,6 +27,7 @@ spring:
         region: us-east-1
         path-style-access-enabled: true
         chunked-encoding-enabled: false
+        checksum-validation-enabled: false
 
 totleben:
   storage:
