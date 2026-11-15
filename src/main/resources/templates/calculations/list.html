@@ -106,6 +106,15 @@
                 </tr>
                 </tbody>
             </table>
+            <nav class="pager" th:if="${calculationPage.totalPages > 1}">
+                <a th:if="${calculationPage.hasPrevious()}"
+                   th:href="@{/(page=${calculationPage.number - 1})}">Предыдущие</a>
+                <span th:unless="${calculationPage.hasPrevious()}"></span>
+                <span th:text="|${calculationPage.number + 1} / ${calculationPage.totalPages}|"></span>
+                <a th:if="${calculationPage.hasNext()}"
+                   th:href="@{/(page=${calculationPage.number + 1})}">Следующие</a>
+                <span th:unless="${calculationPage.hasNext()}"></span>
+            </nav>
         </section>
     </div>
     <p class="footer">Расчёт — FRACTALRABBIT, R. W. R. Darling. Алгоритм генераторов не менялся.</p>

@@ -11,12 +11,11 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfiguration {
 
-    // TODO: maybe increase pool size?
     @Bean(name = "calculationExecutor")
-    public Executor calculationExecutor() {
+    public Executor calculationExecutor(final CalculationProperties properties) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(1);
-        executor.setMaxPoolSize(1);
+        executor.setCorePoolSize(properties.poolSize());
+        executor.setMaxPoolSize(properties.poolSize());
         executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("fractalrabbit-");
         executor.initialize();

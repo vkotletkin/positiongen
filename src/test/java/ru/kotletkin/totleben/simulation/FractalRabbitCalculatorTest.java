@@ -46,7 +46,7 @@ class FractalRabbitCalculatorTest {
 
     private static int dataRows(java.nio.file.Path csv) throws Exception {
         try (CSVParser parser = CSVParser.parse(csv, java.nio.charset.StandardCharsets.UTF_8,
-                CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+                CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).get())) {
             return parser.getRecords().size();
         }
     }

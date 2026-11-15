@@ -13,6 +13,11 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 100
   thymeleaf:
     cache: false
   cloud:
@@ -36,3 +41,5 @@ app:
     origin-latitude: 44.605
     origin-longitude: 33.522
     max-points: 12000
+  calculation:
+    pool-size: 2

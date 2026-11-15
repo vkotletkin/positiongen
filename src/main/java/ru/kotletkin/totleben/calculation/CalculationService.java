@@ -3,6 +3,10 @@ package ru.kotletkin.totleben.calculation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kotletkin.totleben.calculation.dto.CalculationDTO;
@@ -16,7 +20,6 @@ import ru.kotletkin.totleben.result.StoredArtifacts;
 import ru.kotletkin.totleben.simulation.SimulationRequest;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 import static ru.kotletkin.totleben.exception.NotFoundException.notFoundException;
@@ -26,6 +29,8 @@ import static ru.kotletkin.totleben.exception.NotFoundException.notFoundExceptio
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CalculationService {
+
+    private static final Sort NEWEST_FIRST = Sort.by(Sort.Direction.DESC, "createdAt");
 
     private final CalculationRequestRepository requests;
     private final CalculationMapper mapper;
@@ -52,11 +57,10 @@ public class CalculationService {
         return mapper.toDto(loadCalculationByUuid(id));
     }
 
-    // TODO: add pagination
-    public List<CalculationDTO> getAllCalculations() {
-        return requests.findAllByOrderByCreatedAtDesc().stream()
-                .map(mapper::toDto)
-                .toList();
+    public Page<CalculationDTO> getCalculations(final Pageable pageable) {
+        Sort sort = pageable.getSort().isSorted() ? pageable.getSort() : NEWEST_FIRST;
+        Pageable newestFirst = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return requests.findAll(newestFirst).map(mapper::toDto);
     }
 
     public SimulationRequest getSimulationRequestByUuid(final UUID id) {

@@ -1,8 +1,8 @@
 package ru.kotletkin.totleben.map;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import ru.kotletkin.totleben.config.MapProperties;
 import ru.kotletkin.totleben.exception.StorageException;
 import ru.kotletkin.totleben.result.ResultArchive;
 import ru.kotletkin.totleben.result.StoredArtifacts;
@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@EnableConfigurationProperties(MapProperties.class)
 public class MapService {
 
     private final ResultArchive results;

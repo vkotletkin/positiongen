@@ -1,6 +1,6 @@
 package fractalrabbit.probability;
 
-import org.apache.commons.math3.distribution.BetaDistribution;
+import org.apache.commons.statistics.distribution.BetaDistribution;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ class BetaInverseCDFTest {
     private final BetaDistribution dist;
 
     public BetaInverseCDFTest() {
-        dist = new BetaDistribution(4.17, 2.98);
+        dist = BetaDistribution.of(4.17, 2.98);
     }
 
     @Test

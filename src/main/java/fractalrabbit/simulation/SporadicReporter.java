@@ -6,7 +6,7 @@ package fractalrabbit.simulation;
 import fractalrabbit.geometry.Metrizable;
 import fractalrabbit.probability.HeavyTailedPartialSums;
 import fractalrabbit.probability.IrregularBinAssignment;
-import org.apache.commons.math3.distribution.BetaDistribution;
+import org.apache.commons.statistics.distribution.BetaDistribution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class SporadicReporter {
     private final Metrizable[] points;
     private final HeavyTailedPartialSums partialSums = new HeavyTailedPartialSums();
     private final IrregularBinAssignment<Double> bins = new IrregularBinAssignment<>();
-    private final BetaDistribution dailySeasonality = new BetaDistribution(DAILY_ALPHA, DAILY_BETA);
+    private final BetaDistribution dailySeasonality = BetaDistribution.of(DAILY_ALPHA, DAILY_BETA);
     private final double speedBound;
     private final List<Double> uniformOrderStatistics = new ArrayList<>();
     private final List<Double> cumulativeTravelTime = new ArrayList<>();

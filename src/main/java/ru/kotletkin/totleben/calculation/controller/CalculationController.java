@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +16,6 @@ import ru.kotletkin.totleben.calculation.CalculationService;
 import ru.kotletkin.totleben.calculation.dto.CalculationDTO;
 import ru.kotletkin.totleben.calculation.dto.CalculationRequestDTO;
 
-import java.util.List;
 import java.util.UUID;
 
 @Validated
@@ -27,8 +30,9 @@ public class CalculationController {
 
     @GetMapping
     @Operation(summary = "List calculations")
-    public List<CalculationDTO> getAllCalculations() {
-        return calculationService.getAllCalculations();
+    public Page<CalculationDTO> getAllCalculations(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) final Pageable pageable) {
+        return calculationService.getCalculations(pageable);
     }
 
     @PostMapping

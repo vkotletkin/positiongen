@@ -26,9 +26,12 @@ public final class TrackGeoJson {
         Map<Integer, List<Report>> grouped = new LinkedHashMap<>();
         int kept = 0;
         boolean truncated = false;
+        CSVFormat format = CSVFormat.DEFAULT.builder()
+                .setHeader()
+                .setSkipHeaderRecord(true)
+                .get();
         try (Reader reader = new InputStreamReader(csv, StandardCharsets.UTF_8)) {
-            // TODO: withFirstRecordAsHeader()' is deprecated
-            for (CSVRecord row : CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
+            for (CSVRecord row : format.parse(reader)) {
                 if (kept >= maxPoints) {
                     truncated = true;
                     break;

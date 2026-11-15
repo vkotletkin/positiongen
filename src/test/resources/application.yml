@@ -21,9 +21,11 @@ spring:
         path-style-access-enabled: true
         chunked-encoding-enabled: false
 
-totleben:
+app:
   storage:
     bucket: totleben-results
+  calculation:
+    pool-size: 2
   map:
     origin-latitude: 44.605
     origin-longitude: 33.522

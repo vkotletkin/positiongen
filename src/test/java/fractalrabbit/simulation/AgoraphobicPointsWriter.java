@@ -33,7 +33,7 @@ public class AgoraphobicPointsWriter {
             System.out.println("Sampling efficiency = " + points.getSamplingEfficiency() + " after " + pointCount + " points.");
 
             try (BufferedWriter file = Files.newBufferedWriter(Path.of(csvOutputFile));
-                 CSVPrinter csvPrinter = new CSVPrinter(file, CSVFormat.DEFAULT.withDelimiter(','))) {
+                 CSVPrinter csvPrinter = new CSVPrinter(file, CSVFormat.DEFAULT.builder().setDelimiter(',').get())) {
                 int lines = 0;
                 for (double[] point : points.getPoints()) {
                     csvPrinter.printRecords(point);
