@@ -28,7 +28,7 @@ public class MapService {
                     properties.originLongitude(),
                     properties.maxPoints());
         } catch (IOException ex) {
-            throw new StorageException("Не удалось разобрать XY.csv", ex);
+            throw new StorageException("Failed to parse XY.csv", ex);
         }
     }
 }

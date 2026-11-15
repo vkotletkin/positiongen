@@ -63,7 +63,7 @@ public class ObjectStorageService {
                     .bucket(storageConfig.bucket())
                     .build());
         } catch (S3Exception ex) {
-            // 409 Conflict означает, что бакет уже был создан другим инстансом приложения при параллельном старте
+            // 409 Conflict means another application instance already created the bucket during a parallel start
             if (ex.statusCode() != 409) {
                 throw new StorageException("Cannot create bucket in object storage", ex);
             }

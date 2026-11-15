@@ -21,7 +21,7 @@ class FractalRabbitCalculatorTest {
         SimulationRequest request = new SimulationRequest(2, 1.33, 40, 3, 1, 14, 8);
 
         try (SimulationOutput output = calculator.run(request)) {
-            assertTrue(output.reportCount() > 0, "ожидались отчёты в окне 14 суток");
+            assertTrue(output.reportCount() > 0, "expected reports within a 14-day window");
             assertEquals(output.reportCount(), dataRows(output.placesCsv()));
             try (InputStream input = Files.newInputStream(output.xyCsv())) {
                 GeoJsonResponse geoJson = TrackGeoJson.fromCsv(input, output.reportCount(), 44.605, 33.522, 10_000);

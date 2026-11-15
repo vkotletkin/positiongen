@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${calculation.label != null ? calculation.label : 'Карта'} + ' — Positiongen'">Карта</title>
+    <title th:text="${calculation.label != null ? calculation.label : 'Map'} + ' — Positiongen'">Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="anonymous">
@@ -12,27 +12,27 @@
 <body>
 <div class="map-page">
     <aside class="side">
-        <p><a th:href="@{/}">Все запросы</a></p>
-        <h1 th:text="${calculation.label != null ? calculation.label : 'Маршруты'}">Маршруты</h1>
+        <p><a th:href="@{/}">All requests</a></p>
+        <h1 th:text="${calculation.label != null ? calculation.label : 'Tracks'}">Tracks</h1>
         <p id="status-panel" th:text="${calculation.statusTitle}" th:attr="data-status=${calculation.status}"></p>
-        <p id="report-count" th:text="${calculation.reportCount != null ? 'Отчётов: ' + calculation.reportCount : ''}"
+        <p id="report-count" th:text="${calculation.reportCount != null ? 'Reports: ' + calculation.reportCount : ''}"
            th:hidden="${calculation.reportCount == null}"></p>
         <p id="notice" class="notice" th:text="${calculation.errorMessage}"
            th:hidden="${calculation.errorMessage == null}"></p>
         <ul class="meta">
-            <li th:text="|Размерность ${calculation.dimension}, фрактальная ${calculation.fractalDimension}|"></li>
-            <li th:text="|Мест ${calculation.pointCount}|"></li>
-            <li th:text="|Путешественников ${calculation.travelerCount}, на одной траектории ${calculation.coTravelerCount}|"></li>
-            <li th:text="|Окно ${calculation.days} сут, в среднем ${calculation.meanReportCount} отчётов|"></li>
-            <li th:text="|Привязка плоскости: ${originLatitude}, ${originLongitude}|"></li>
+            <li th:text="|Dimension ${calculation.dimension}, fractal ${calculation.fractalDimension}|"></li>
+            <li th:text="|Places ${calculation.pointCount}|"></li>
+            <li th:text="|Travelers ${calculation.travelerCount}, on one trajectory ${calculation.coTravelerCount}|"></li>
+            <li th:text="|Window ${calculation.days} days, mean ${calculation.meanReportCount} reports|"></li>
+            <li th:text="|Plane origin: ${originLatitude}, ${originLongitude}|"></li>
         </ul>
         <div id="downloads" class="downloads" th:hidden="${calculation.status.name() != 'SUCCEEDED'}">
             <a class="button secondary" th:href="@{|/api/calculations/${calculation.id}/files/xy|}">XY.csv</a>
             <a class="button secondary" th:href="@{|/api/calculations/${calculation.id}/files/places|}">PLACES.csv</a>
         </div>
         <div id="legend"></div>
-        <p class="hint">Координаты модели — километры по первым двум осям. На карте они сдвинуты от точки привязки,
-            чтобы линии было куда положить.</p>
+        <p class="hint">Model coordinates are kilometers along the first two axes. On the map they are offset from the
+            origin so the lines have a place to sit.</p>
     </aside>
     <div id="map"
          th:data-id="${calculation.id}"

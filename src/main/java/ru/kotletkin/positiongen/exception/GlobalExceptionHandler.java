@@ -109,6 +109,6 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleOnMissingRequestHeaderException(final MissingRequestHeaderException e) {
         log.error(e.getMessage());
         return new ErrorResponse(
-                timestamp(), "Ошибка передачи заголовка." + e.getHeaderName(), ERR_DESCRIPTION_EMPTY);
+                timestamp(), "Missing request header: " + e.getHeaderName(), ERR_DESCRIPTION_EMPTY);
     }
 }

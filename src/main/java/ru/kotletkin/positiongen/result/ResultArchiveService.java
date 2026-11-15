@@ -37,7 +37,7 @@ public class ResultArchiveService {
                     Files.size(output.placesCsv()),
                     output.reportCount());
         } catch (IOException ex) {
-            throw new StorageException("Не удалось прочитать размер сохранённых файлов", ex);
+            throw new StorageException("Failed to read the size of stored files", ex);
         }
     }
 
@@ -57,9 +57,9 @@ public class ResultArchiveService {
 
     private CalculationResult readyResult(final UUID calculationId) {
         CalculationRequest request = requests.findById(calculationId)
-                .orElseThrow(notFoundException("Расчёт не найден"));
+                .orElseThrow(notFoundException("Calculation not found"));
         if (request.getStatus() != CalculationStatus.SUCCEEDED || request.getResult() == null) {
-            throw new CalculationNotReadyException("Расчёт ещё не готов");
+            throw new CalculationNotReadyException("Calculation is not ready yet");
         }
         return request.getResult();
     }

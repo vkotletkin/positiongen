@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/calculations")
 @RequiredArgsConstructor
-@Tag(name = "Calculations", description = "Запросы на расчёт и их метаданные")
+@Tag(name = "Calculations", description = "Calculation requests and their metadata")
 public class CalculationController {
 
     private final CalculationService calculationService;

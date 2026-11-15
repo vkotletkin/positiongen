@@ -13,7 +13,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/calculations/{id}/geojson")
 @RequiredArgsConstructor
-@Tag(name = "Map", description = "Отрисовка результатов на карте")
+@Tag(name = "Map", description = "Map rendering of calculation results")
 public class MapController {
 
     private final MapService mapService;

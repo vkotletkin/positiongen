@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,113 +11,113 @@
     <header class="masthead">
         <div>
             <h1>Positiongen</h1>
-            <p>Синтетические маршруты FRACTALRABBIT. Параметры запроса и метаданные результата хранятся в Postgres, сами
-                CSV — в SeaweedFS.</p>
+            <p>Synthetic FRACTALRABBIT routes. Request parameters and result metadata are stored in Postgres; the CSV
+                files themselves are in SeaweedFS.</p>
         </div>
     </header>
 
     <div class="layout">
         <section class="panel">
-            <h2>Новый запрос</h2>
-            <p class="hint">Числа по умолчанию небольшие, чтобы карта открылась быстро. Пример из parameters.csv: 5000
-                точек, 3000 путешественников, 200 отчётов — это уже долгий расчёт.</p>
+            <h2>New request</h2>
+            <p class="hint">The defaults are small so the map opens quickly. The parameters.csv example — 5,000 places,
+                3,000 travelers, 200 reports — is already a long calculation.</p>
             <form th:object="${form}" method="post" th:action="@{/calculations}">
-                <label>Название
-                    <input type="text" th:field="*{label}" maxlength="200" placeholder="Необязательно">
+                <label>Label
+                    <input type="text" th:field="*{label}" maxlength="200" placeholder="Optional">
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('label')}" th:errors="*{label}"></p>
 
-                <label>Размерность пространства
+                <label>Space dimension
                     <input type="number" th:field="*{dimension}" min="2" max="16" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('dimension')}" th:errors="*{dimension}"></p>
 
-                <label>Фрактальная размерность
+                <label>Fractal dimension
                     <input type="number" th:field="*{fractalDimension}" min="0.01" step="0.01" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('fractalDimension')}" th:errors="*{fractalDimension}"></p>
 
-                <label>Число мест
+                <label>Number of places
                     <input type="number" th:field="*{pointCount}" min="1" max="20000" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('pointCount')}" th:errors="*{pointCount}"></p>
 
-                <label>Путешественники
+                <label>Travelers
                     <input type="number" th:field="*{travelerCount}" min="1" max="5000" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('travelerCount')}" th:errors="*{travelerCount}"></p>
 
-                <label>Из них на одной траектории
+                <label>Of them on one trajectory
                     <input type="number" th:field="*{coTravelerCount}" min="0" max="5000" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('coTravelerCount')}" th:errors="*{coTravelerCount}"></p>
 
-                <label>Окно наблюдения, сутки
+                <label>Observation window, days
                     <input type="number" th:field="*{days}" min="0.001" max="3650" step="0.1" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('days')}" th:errors="*{days}"></p>
 
-                <label>Среднее число отчётов
+                <label>Mean report count
                     <input type="number" th:field="*{meanReportCount}" min="0.001" max="1000" step="1" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('meanReportCount')}" th:errors="*{meanReportCount}"></p>
 
-                <button type="submit">Запустить расчёт</button>
+                <button type="submit">Run calculation</button>
             </form>
             <details>
-                <summary>Фиксированные параметры модели</summary>
-                <p>Эти величины заданы процедурой FRACTALRABBIT и в форму не вынесены.</p>
+                <summary>Fixed model parameters</summary>
+                <p>These values are set by the FRACTALRABBIT procedure and are not on the form.</p>
                 <ul>
-                    <li th:text="|Темп новых кластеров ${constants.restartRate}|"></li>
-                    <li th:text="|Показатель расстояния ${constants.distanceExponent}|"></li>
-                    <li th:text="|Предел скорости ${constants.maxKilometersPerHour} км/ч|"></li>
-                    <li th:text="|${constants.kilometersPerUnit} км на единицу модели|"></li>
-                    <li th:text="|Средняя длина траектории ${constants.stepsMean} шагов|"></li>
-                    <li th:text="|Средний параметр исследования ${constants.phiMean}|"></li>
-                    <li th:text="|Парето: нижняя граница ${constants.reportDelta}, хвост ${constants.reportAlpha}|"></li>
+                    <li th:text="|New-cluster rate ${constants.restartRate}|"></li>
+                    <li th:text="|Distance exponent ${constants.distanceExponent}|"></li>
+                    <li th:text="|Speed limit ${constants.maxKilometersPerHour} km/h|"></li>
+                    <li th:text="|${constants.kilometersPerUnit} km per model unit|"></li>
+                    <li th:text="|Mean trajectory length ${constants.stepsMean} steps|"></li>
+                    <li th:text="|Mean exploration parameter ${constants.phiMean}|"></li>
+                    <li th:text="|Pareto: lower bound ${constants.reportDelta}, tail ${constants.reportAlpha}|"></li>
                 </ul>
             </details>
         </section>
 
         <section class="table-wrap">
-            <p class="empty" th:if="${#lists.isEmpty(requests)}">Запросов пока нет.</p>
+            <p class="empty" th:if="${#lists.isEmpty(requests)}">No requests yet.</p>
             <table th:if="${not #lists.isEmpty(requests)}">
                 <thead>
                 <tr>
-                    <th>Запрос</th>
-                    <th>Статус</th>
-                    <th>Параметры</th>
-                    <th>Отчётов</th>
+                    <th>Request</th>
+                    <th>Status</th>
+                    <th>Parameters</th>
+                    <th>Reports</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="item : ${requests}" th:attr="data-status=${item.status}">
                     <td>
-                        <strong th:text="${item.label != null ? item.label : 'без названия'}"></strong>
+                        <strong th:text="${item.label != null ? item.label : 'untitled'}"></strong>
                         <div class="hint" th:text="${#temporals.format(item.createdAt, 'dd.MM.yyyy HH:mm')}"></div>
                         <div class="error" th:if="${item.errorMessage != null}" th:text="${item.errorMessage}"></div>
                     </td>
                     <td><span class="status" th:text="${item.statusTitle}"></span></td>
                     <td class="hint"
-                        th:text="|${item.dimension}D, h=${item.fractalDimension}, мест ${item.pointCount}, путешественников ${item.travelerCount}, попутчиков ${item.coTravelerCount}, ${item.days} сут|"></td>
+                        th:text="|${item.dimension}D, h=${item.fractalDimension}, places ${item.pointCount}, travelers ${item.travelerCount}, co-travelers ${item.coTravelerCount}, ${item.days} days|"></td>
                     <td th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
-                    <td><a th:href="@{|/calculations/${item.id}/map|}">Карта</a></td>
+                    <td><a th:href="@{|/calculations/${item.id}/map|}">Map</a></td>
                 </tr>
                 </tbody>
             </table>
             <nav class="pager" th:if="${calculationPage.totalPages > 1}">
                 <a th:if="${calculationPage.hasPrevious()}"
-                   th:href="@{/(page=${calculationPage.number - 1})}">Предыдущие</a>
+                   th:href="@{/(page=${calculationPage.number - 1})}">Previous</a>
                 <span th:unless="${calculationPage.hasPrevious()}"></span>
                 <span th:text="|${calculationPage.number + 1} / ${calculationPage.totalPages}|"></span>
                 <a th:if="${calculationPage.hasNext()}"
-                   th:href="@{/(page=${calculationPage.number + 1})}">Следующие</a>
+                   th:href="@{/(page=${calculationPage.number + 1})}">Next</a>
                 <span th:unless="${calculationPage.hasNext()}"></span>
             </nav>
         </section>
     </div>
-    <p class="footer">Расчёт — FRACTALRABBIT, R. W. R. Darling. Алгоритм генераторов не менялся.</p>
+    <p class="footer">Calculation is FRACTALRABBIT, R. W. R. Darling. The generator algorithm is unchanged.</p>
 </main>
 <script th:if="${requests.?[status.name() == 'PENDING' or status.name() == 'RUNNING'].size() > 0}">
     window.setTimeout(() => window.location.reload(), 3000);

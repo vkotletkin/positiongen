@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/calculations/{id}/files")
 @RequiredArgsConstructor
-@Tag(name = "Results", description = "Файлы результатов расчёта")
+@Tag(name = "Results", description = "Calculation result files")
 public class ResultFileController {
 
     private final ResultArchiveService results;

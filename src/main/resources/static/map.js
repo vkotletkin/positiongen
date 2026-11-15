@@ -29,7 +29,7 @@ function showNotice(text) {
 async function poll() {
     const response = await fetch(`/api/calculations/${calculationId}`);
     if (!response.ok) {
-        showNotice("Не удалось получить статус расчёта");
+        showNotice("Could not load the calculation status");
         return;
     }
     const data = await response.json();
@@ -37,19 +37,19 @@ async function poll() {
     panel.dataset.status = data.status;
     if (data.reportCount !== null && data.reportCount !== undefined) {
         reportCount.hidden = false;
-        reportCount.textContent = `Отчётов: ${data.reportCount}`;
+        reportCount.textContent = `Reports: ${data.reportCount}`;
     }
     if (data.status === "SUCCEEDED") {
         downloads.hidden = false;
         if (data.reportCount === 0) {
-            showNotice("Отчётов нет: окно наблюдения короче времени в пути или число отчётов выпало нулевым.");
+            showNotice("No reports: the observation window is shorter than the travel time, or the report count came out zero.");
             return;
         }
         await draw();
         return;
     }
     if (data.status === "FAILED") {
-        showNotice(data.errorMessage || "Расчёт завершился с ошибкой");
+        showNotice(data.errorMessage || "Calculation failed");
         return;
     }
     window.setTimeout(poll, 2000);
@@ -58,12 +58,12 @@ async function poll() {
 async function draw() {
     const response = await fetch(`/api/calculations/${calculationId}/geojson`);
     if (!response.ok) {
-        showNotice("Не удалось прочитать результат из хранилища");
+        showNotice("Could not read the result from storage");
         return;
     }
     const payload = await response.json();
     if (payload.truncated) {
-        showNotice(`На карте ${payload.drawnPoints} из ${payload.reportCount} отчётов. Полные файлы лежат в CSV.`);
+        showNotice(`The map shows ${payload.drawnPoints} of ${payload.reportCount} reports. The full files are in the CSV.`);
     }
     const bounds = [];
     layers.clearLayers();
@@ -86,9 +86,9 @@ async function draw() {
                 fillColor: stroke,
                 fillOpacity: 0.95
             }).bindPopup(
-                `Путешественник ${props.travelerId}<br>` +
-                `Время ${Number(props.days).toFixed(3)} сут<br>` +
-                `x ${Number(props.xKm).toFixed(2)} км, y ${Number(props.yKm).toFixed(2)} км`
+                `Traveler ${props.travelerId}<br>` +
+                `Time ${Number(props.days).toFixed(3)} days<br>` +
+                `x ${Number(props.xKm).toFixed(2)} km, y ${Number(props.yKm).toFixed(2)} km`
             ).addTo(layers);
             bounds.push([lat, lon]);
         }
@@ -97,7 +97,7 @@ async function draw() {
     for (const [travelerId, line] of travelerLines) {
         const item = document.createElement("button");
         item.type = "button";
-        item.textContent = `Путешественник ${travelerId}`;
+        item.textContent = `Traveler ${travelerId}`;
         item.style.borderLeftColor = color(travelerId);
         item.addEventListener("click", () => {
             const lineBounds = line.getBounds();

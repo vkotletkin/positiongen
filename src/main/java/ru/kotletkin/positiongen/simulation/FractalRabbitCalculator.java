@@ -119,7 +119,7 @@ public class FractalRabbitCalculator {
             int xyRows = writeCoordinateCsv(points, reportTimes, reportPlaces, xyCsv);
             int placeRows = writePlacesCsv(reportTimes, reportPlaces, placesCsv);
             if (xyRows != placeRows) {
-                throw new IllegalStateException("XY.csv и PLACES.csv разошлись по числу строк");
+                throw new IllegalStateException("XY.csv and PLACES.csv have different row counts");
             }
             return new SimulationOutput(directory, xyCsv, placesCsv, xyRows);
         } catch (IOException | RuntimeException ex) {

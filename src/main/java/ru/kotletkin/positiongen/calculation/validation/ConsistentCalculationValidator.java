@@ -15,14 +15,14 @@ public class ConsistentCalculationValidator implements ConstraintValidator<Consi
         context.disableDefaultConstraintViolation();
         if (form.getFractalDimension() >= form.getDimension()) {
             context.buildConstraintViolationWithTemplate(
-                            "Фрактальная размерность должна быть меньше размерности пространства")
+                            "Fractal dimension must be less than the space dimension")
                     .addPropertyNode("fractalDimension")
                     .addConstraintViolation();
             valid = false;
         }
         if (form.getCoTravelerCount() > form.getTravelerCount()) {
             context.buildConstraintViolationWithTemplate(
-                            "Число попутчиков не может превышать число путешественников")
+                            "Co-traveler count cannot exceed traveler count")
                     .addPropertyNode("coTravelerCount")
                     .addConstraintViolation();
             valid = false;

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = ConsistentCalculationValidator.class)
 public @interface ConsistentCalculation {
 
-    String message() default "Несогласованные параметры расчёта";
+    String message() default "Inconsistent calculation parameters";
 
     Class<?>[] groups() default {};
 
