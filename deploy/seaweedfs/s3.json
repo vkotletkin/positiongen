@@ -1,11 +1,11 @@
 {
   "identities": [
     {
-      "name": "totleben",
+      "name": "positiongen",
       "credentials": [
         {
-          "accessKey": "totleben",
-          "secretKey": "totleben-secret"
+          "accessKey": "positiongen",
+          "secretKey": "positiongen-secret"
         }
       ],
       "actions": [

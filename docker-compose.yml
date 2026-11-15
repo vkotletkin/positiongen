@@ -4,9 +4,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/totleben
-      SPRING_DATASOURCE_USERNAME: totleben
-      SPRING_DATASOURCE_PASSWORD: totleben
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/positiongen
+      SPRING_DATASOURCE_USERNAME: positiongen
+      SPRING_DATASOURCE_PASSWORD: positiongen
       SPRING_CLOUD_AWS_S3_ENDPOINT: http://seaweedfs:8333
     depends_on:
       postgres:
@@ -17,15 +17,15 @@ services:
   postgres:
     image: postgres:18
     environment:
-      POSTGRES_DB: totleben
-      POSTGRES_USER: totleben
-      POSTGRES_PASSWORD: totleben
+      POSTGRES_DB: positiongen
+      POSTGRES_USER: positiongen
+      POSTGRES_PASSWORD: positiongen
     ports:
       - "5432:5432"
     volumes:
-      - totleben-pg:/var/lib/postgresql
+      - positiongen-pg:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U totleben -d totleben"]
+      test: ["CMD-SHELL", "pg_isready -U positiongen -d positiongen"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -44,8 +44,8 @@ services:
       - -s3.config=/etc/seaweedfs/s3.json
     volumes:
       - ./deploy/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
-      - totleben-seaweed:/data
+      - positiongen-seaweed:/data
 
 volumes:
-  totleben-pg:
-  totleben-seaweed:
+  positiongen-pg:
+  positiongen-seaweed:

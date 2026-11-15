@@ -1,10 +1,10 @@
 spring:
   application:
-    name: totleben
+    name: positiongen
   datasource:
-    url: jdbc:postgresql://localhost:5432/totleben
-    username: totleben
-    password: ${SPRING_DATASOURCE_PASSWORD:totleben}
+    url: jdbc:postgresql://localhost:5432/positiongen
+    username: positiongen
+    password: ${SPRING_DATASOURCE_PASSWORD:positiongen}
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,8 +23,8 @@ spring:
   cloud:
     aws:
       credentials:
-        access-key: totleben
-        secret-key: ${SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY:totleben-secret}
+        access-key: positiongen
+        secret-key: ${SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY:positiongen-secret}
       region:
         static: us-east-1
       s3:
@@ -36,7 +36,7 @@ spring:
 
 app:
   storage:
-    bucket: totleben-results
+    bucket: positiongen-results
   map:
     origin-latitude: 44.605
     origin-longitude: 33.522

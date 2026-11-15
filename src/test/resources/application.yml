@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:totleben;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:positiongen;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -11,8 +11,8 @@ spring:
   cloud:
     aws:
       credentials:
-        access-key: totleben
-        secret-key: totleben-secret
+        access-key: positiongen
+        secret-key: positiongen-secret
       region:
         static: us-east-1
       s3:
@@ -23,7 +23,7 @@ spring:
 
 app:
   storage:
-    bucket: totleben-results
+    bucket: positiongen-results
   calculation:
     pool-size: 2
   map:
