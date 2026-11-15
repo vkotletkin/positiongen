@@ -11,8 +11,7 @@
     <header class="masthead">
         <div>
             <h1>Positiongen</h1>
-            <p>Synthetic FRACTALRABBIT routes. Request parameters and result metadata are stored in Postgres; the CSV
-                files themselves are in SeaweedFS.</p>
+            <p>Synthetic routes.</p>
         </div>
     </header>
 
@@ -47,18 +46,19 @@
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('travelerCount')}" th:errors="*{travelerCount}"></p>
 
-                <label>Of them on one trajectory
-                    <input type="number" th:field="*{coTravelerCount}" min="0" max="5000" required>
+                <label>Companions on one route
+                    <input type="number" th:field="*{coTravelerCount}" min="0" max="5000" step="1" required>
                 </label>
+                <p class="hint">A random group of this size shares one route. The finished calculation lists their ids.</p>
                 <p class="error" th:if="${#fields.hasErrors('coTravelerCount')}" th:errors="*{coTravelerCount}"></p>
 
                 <label>Observation window, days
-                    <input type="number" th:field="*{days}" min="0.001" max="3650" step="0.1" required>
+                    <input type="number" th:field="*{days}" min="1" max="3650" step="1" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('days')}" th:errors="*{days}"></p>
 
                 <label>Mean report count
-                    <input type="number" th:field="*{meanReportCount}" min="0.001" max="1000" step="1" required>
+                    <input type="number" th:field="*{meanReportCount}" min="1" max="1000" step="1" required>
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('meanReportCount')}" th:errors="*{meanReportCount}"></p>
 
@@ -66,7 +66,6 @@
             </form>
             <details>
                 <summary>Fixed model parameters</summary>
-                <p>These values are set by the FRACTALRABBIT procedure and are not on the form.</p>
                 <ul>
                     <li th:text="|New-cluster rate ${constants.restartRate}|"></li>
                     <li th:text="|Distance exponent ${constants.distanceExponent}|"></li>
@@ -99,8 +98,14 @@
                         <div class="error" th:if="${item.errorMessage != null}" th:text="${item.errorMessage}"></div>
                     </td>
                     <td><span class="status" th:text="${item.statusTitle}"></span></td>
-                    <td class="hint"
-                        th:text="|${item.dimension}D, h=${item.fractalDimension}, places ${item.pointCount}, travelers ${item.travelerCount}, co-travelers ${item.coTravelerCount}, ${item.days} days|"></td>
+                    <td class="hint">
+                        <div th:text="|${item.dimension}D, h=${item.fractalDimension}, places ${item.pointCount}, travelers ${item.travelerCount}, ${item.days} days|"></div>
+                        <div th:if="${item.coTravelerIds != null and !#lists.isEmpty(item.coTravelerIds)}">
+                            Companions:
+                            <span th:each="companionId, stat : ${item.coTravelerIds}"
+                                  th:text="${stat.last} ? ${companionId} : ${companionId} + ', '"></span>
+                        </div>
+                    </td>
                     <td th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
                     <td><a th:href="@{|/calculations/${item.id}/map|}">Map</a></td>
                 </tr>

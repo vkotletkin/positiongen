@@ -15,6 +15,7 @@ public interface CalculationMapper {
     @Mapping(target = "reportCount", source = "result.reportCount")
     @Mapping(target = "xyByteSize", source = "result.xyByteSize")
     @Mapping(target = "placesByteSize", source = "result.placesByteSize")
+    @Mapping(target = "coTravelerIds", source = "result.coTravelerIds")
     CalculationDTO toDto(CalculationRequest request);
 
     SimulationRequest toSimulationRequest(CalculationRequest request);

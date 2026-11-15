@@ -27,6 +27,6 @@ app:
   calculation:
     pool-size: 2
   map:
-    origin-latitude: 44.605
-    origin-longitude: 33.522
+    origin-latitude: 59.9343
+    origin-longitude: 30.3351
     max-points: 12000

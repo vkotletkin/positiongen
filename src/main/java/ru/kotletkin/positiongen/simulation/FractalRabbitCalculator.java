@@ -35,11 +35,11 @@ public class FractalRabbitCalculator {
     /**
      * Traveler speed bound, kilometers per hour.
      */
-    static final double MAX_KILOMETERS_PER_HOUR = 50.0;
+    static final double MAX_KILOMETERS_PER_HOUR = 100.0;
     /**
      * Kilometers represented by one abstract distance unit.
      */
-    static final double KILOMETERS_PER_UNIT = 200.0;
+    static final double KILOMETERS_PER_UNIT = 20.0;
     /**
      * Mean of the Poisson exploration parameter.
      */
@@ -85,7 +85,8 @@ public class FractalRabbitCalculator {
 
         PoissonVariate phiRandom = new PoissonVariate(PHI_MEAN);
         PoissonVariate stepsRandom = new PoissonVariate(STEPS_MEAN);
-        Map<Integer, Integer> trajectoryAssignment = assignTravelers(request.coTravelerCount(), request.travelerCount());
+        TravelerAssignment assignment = assignTravelers(request.coTravelerCount(), request.travelerCount());
+        Map<Integer, Integer> trajectoryAssignment = assignment.trajectories();
 
         int trajectoryCount = request.travelerCount() - request.coTravelerCount() + 1;
         List<List<Integer>> trajectories = new ArrayList<>();
@@ -99,8 +100,8 @@ public class FractalRabbitCalculator {
         PoissonVariate countRandom = new PoissonVariate(request.meanReportCount());
         Map<Integer, List<Double>> reportTimes = new HashMap<>();
         Map<Integer, List<Integer>> reportPlaces = new HashMap<>();
-        for (Map.Entry<Integer, Integer> assignment : trajectoryAssignment.entrySet()) {
-            List<Integer> visits = trajectories.get(assignment.getValue());
+        for (Map.Entry<Integer, Integer> entry : trajectoryAssignment.entrySet()) {
+            List<Integer> visits = trajectories.get(entry.getValue());
             reporter.embedTrajectory(visits);
             reporter.generateReports(
                     visits,
@@ -108,8 +109,8 @@ public class FractalRabbitCalculator {
                     REPORT_DELTA,
                     REPORT_ALPHA,
                     request.days());
-            reportTimes.put(assignment.getKey(), List.copyOf(reporter.getReportTimes()));
-            reportPlaces.put(assignment.getKey(), List.copyOf(reporter.getReportPlaces()));
+            reportTimes.put(entry.getKey(), List.copyOf(reporter.getReportTimes()));
+            reportPlaces.put(entry.getKey(), List.copyOf(reporter.getReportPlaces()));
         }
 
         Path directory = createPrivateTempDirectory();
@@ -121,7 +122,7 @@ public class FractalRabbitCalculator {
             if (xyRows != placeRows) {
                 throw new IllegalStateException("XY.csv and PLACES.csv have different row counts");
             }
-            return new SimulationOutput(directory, xyCsv, placesCsv, xyRows);
+            return new SimulationOutput(directory, xyCsv, placesCsv, xyRows, assignment.coTravelerIds());
         } catch (IOException | RuntimeException ex) {
             deleteQuietly(xyCsv);
             deleteQuietly(placesCsv);
@@ -130,19 +131,26 @@ public class FractalRabbitCalculator {
         }
     }
 
-    private static Map<Integer, Integer> assignTravelers(int numCoTravelers, int numTravelers) {
+    private static TravelerAssignment assignTravelers(int numCoTravelers, int numTravelers) {
         Integer[] travelerIds = new Integer[numTravelers];
         Arrays.setAll(travelerIds, id -> id);
         List<Integer> shuffled = Arrays.asList(travelerIds);
         Collections.shuffle(shuffled);
         Map<Integer, Integer> trajectoryAssignment = new HashMap<>();
+        List<Integer> coTravelerIds = new ArrayList<>();
         for (int index = 0; index < numCoTravelers; index++) {
-            trajectoryAssignment.put(shuffled.get(index), 0);
+            int travelerId = shuffled.get(index);
+            trajectoryAssignment.put(travelerId, 0);
+            coTravelerIds.add(travelerId);
         }
         for (int index = numCoTravelers; index < numTravelers; index++) {
             trajectoryAssignment.put(shuffled.get(index), index - numCoTravelers + 1);
         }
-        return trajectoryAssignment;
+        coTravelerIds.sort(Integer::compareTo);
+        return new TravelerAssignment(trajectoryAssignment, List.copyOf(coTravelerIds));
+    }
+
+    private record TravelerAssignment(Map<Integer, Integer> trajectories, List<Integer> coTravelerIds) {
     }
 
     private static int writeCoordinateCsv(AgoraphobicPoints points,

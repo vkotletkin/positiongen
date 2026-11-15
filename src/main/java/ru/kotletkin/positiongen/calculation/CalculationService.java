@@ -20,6 +20,8 @@ import ru.kotletkin.positiongen.result.StoredArtifacts;
 import ru.kotletkin.positiongen.simulation.SimulationRequest;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static ru.kotletkin.positiongen.exception.NotFoundException.notFoundException;
@@ -35,6 +37,7 @@ public class CalculationService {
     private final CalculationRequestRepository requests;
     private final CalculationMapper mapper;
 
+    @Transactional
     public UUID submit(final CalculationRequestDTO request) {
         CalculationRequest entity = new CalculationRequest();
         entity.setId(UUID.randomUUID());
@@ -75,7 +78,7 @@ public class CalculationService {
     }
 
     @Transactional
-    public void markSucceeded(final UUID id, final StoredArtifacts artifacts) {
+    public void markSucceeded(final UUID id, final StoredArtifacts artifacts, final List<Integer> coTravelerIds) {
         CalculationRequest request = loadCalculationByUuid(id);
         request.setStatus(CalculationStatus.SUCCEEDED);
         request.setFinishedAt(Instant.now());
@@ -88,6 +91,7 @@ public class CalculationService {
         result.setXyByteSize(artifacts.xyByteSize());
         result.setPlacesByteSize(artifacts.placesByteSize());
         result.setReportCount(artifacts.reportCount());
+        result.setCoTravelerIds(new ArrayList<>(coTravelerIds));
         result.setCreatedAt(Instant.now());
         request.setResult(result);
     }

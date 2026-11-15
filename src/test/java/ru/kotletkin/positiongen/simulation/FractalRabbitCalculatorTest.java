@@ -22,6 +22,9 @@ class FractalRabbitCalculatorTest {
 
         try (SimulationOutput output = calculator.run(request)) {
             assertTrue(output.reportCount() > 0, "expected reports within a 14-day window");
+            assertEquals(1, output.coTravelerIds().size());
+            assertTrue(output.coTravelerIds().getFirst() >= 0);
+            assertTrue(output.coTravelerIds().getFirst() < request.travelerCount());
             assertEquals(output.reportCount(), dataRows(output.placesCsv()));
             try (InputStream input = Files.newInputStream(output.xyCsv())) {
                 GeoJsonResponse geoJson = TrackGeoJson.fromCsv(input, output.reportCount(), 44.605, 33.522, 10_000);

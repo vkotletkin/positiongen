@@ -7,6 +7,8 @@ import lombok.Setter;
 import ru.kotletkin.positiongen.calculation.model.CalculationRequest;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -37,6 +39,12 @@ public class CalculationResult {
 
     @Column(nullable = false)
     private int reportCount;
+
+    @ElementCollection
+    @CollectionTable(name = "calculation_co_traveler", joinColumns = @JoinColumn(name = "result_id"))
+    @Column(name = "traveler_id", nullable = false)
+    @OrderColumn(name = "list_index")
+    private List<Integer> coTravelerIds = new ArrayList<>();
 
     @Column(nullable = false)
     private Instant createdAt;

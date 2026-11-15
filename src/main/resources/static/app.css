@@ -266,6 +266,19 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] {
     border-radius: 8px;
 }
 
+#legend button[aria-pressed="true"] {
+    background: #f3eee6;
+    border-color: var(--ink);
+}
+
+#legend button.is-companion {
+    font-weight: 600;
+}
+
+#legend button.is-dim {
+    opacity: 0.4;
+}
+
 #map {
     min-height: 100vh;
     background: #d5e3dc;

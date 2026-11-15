@@ -34,7 +34,7 @@ public class CalculationJob {
             calculations.markRunning(uuid);
             try (SimulationOutput output = calculator.run(calculations.getSimulationRequestByUuid(uuid))) {
                 StoredArtifacts artifacts = results.saveToStore(uuid, output);
-                calculations.markSucceeded(uuid, artifacts);
+                calculations.markSucceeded(uuid, artifacts, output.coTravelerIds());
             }
         } catch (Exception ex) {
             log.error("Calculation {} failed", uuid, ex);

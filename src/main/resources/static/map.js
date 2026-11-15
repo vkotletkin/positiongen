@@ -5,6 +5,10 @@ const notice = document.getElementById("notice");
 const legend = document.getElementById("legend");
 const downloads = document.getElementById("downloads");
 const reportCount = document.getElementById("report-count");
+const companions = document.getElementById("companions");
+const companionIds = new Set(
+    (root.dataset.companions || "").split(",").filter(Boolean).map(Number)
+);
 
 const map = L.map(root, {scrollWheelZoom: true});
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -14,11 +18,33 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 map.setView([Number(root.dataset.originLat), Number(root.dataset.originLon)], 8);
 
 const layers = L.layerGroup().addTo(map);
-const travelerLines = new Map();
+const travelers = new Map();
+let selectedTravelerId = null;
 
 function color(id) {
     const hue = (Number(id) * 47) % 360;
     return `hsl(${hue} 62% 36%)`;
+}
+
+function isCompanion(id) {
+    return companionIds.has(Number(id));
+}
+
+function travelerLabel(id) {
+    return isCompanion(id) ? `Traveler ${id}, companion` : `Traveler ${id}`;
+}
+
+function showCompanions(ids) {
+    companionIds.clear();
+    if (!Array.isArray(ids)) {
+        return;
+    }
+    ids.forEach((id) => companionIds.add(Number(id)));
+    if (!companions) {
+        return;
+    }
+    companions.hidden = ids.length === 0;
+    companions.textContent = ids.length === 0 ? "" : `Companions: ${ids.join(", ")}`;
 }
 
 function showNotice(text) {
@@ -38,6 +64,9 @@ async function poll() {
     if (data.reportCount !== null && data.reportCount !== undefined) {
         reportCount.hidden = false;
         reportCount.textContent = `Reports: ${data.reportCount}`;
+    }
+    if (Array.isArray(data.coTravelerIds)) {
+        showCompanions(data.coTravelerIds);
     }
     if (data.status === "SUCCEEDED") {
         downloads.hidden = false;
@@ -67,50 +96,91 @@ async function draw() {
     }
     const bounds = [];
     layers.clearLayers();
-    travelerLines.clear();
+    travelers.clear();
+    selectedTravelerId = null;
     for (const feature of payload.collection.features) {
         const travelerId = feature.properties.travelerId;
         const stroke = color(travelerId);
+        const traveler = travelers.get(travelerId) ?? {line: null, markers: []};
+        travelers.set(travelerId, traveler);
         if (feature.geometry.type === "LineString") {
             const latLngs = feature.geometry.coordinates.map(([lon, lat]) => [lat, lon]);
-            const line = L.polyline(latLngs, {color: stroke, weight: 3, opacity: 0.9}).addTo(layers);
-            travelerLines.set(travelerId, line);
+            traveler.line = L.polyline(latLngs, {color: stroke, weight: 3, opacity: 0.9}).addTo(layers);
             latLngs.forEach((point) => bounds.push(point));
         } else if (feature.geometry.type === "Point") {
             const [lon, lat] = feature.geometry.coordinates;
             const props = feature.properties;
-            L.circleMarker([lat, lon], {
+            const marker = L.circleMarker([lat, lon], {
                 radius: 4,
                 color: "#fffaf3",
                 weight: 1,
                 fillColor: stroke,
                 fillOpacity: 0.95
             }).bindPopup(
-                `Traveler ${props.travelerId}<br>` +
+                `${travelerLabel(props.travelerId)}<br>` +
                 `Time ${Number(props.days).toFixed(3)} days<br>` +
                 `x ${Number(props.xKm).toFixed(2)} km, y ${Number(props.yKm).toFixed(2)} km`
             ).addTo(layers);
+            traveler.markers.push(marker);
             bounds.push([lat, lon]);
         }
     }
     legend.replaceChildren();
-    for (const [travelerId, line] of travelerLines) {
+    for (const [travelerId, traveler] of travelers) {
+        if (!traveler.line) {
+            continue;
+        }
         const item = document.createElement("button");
         item.type = "button";
-        item.textContent = `Traveler ${travelerId}`;
+        item.dataset.travelerId = String(travelerId);
+        item.textContent = travelerLabel(travelerId);
+        item.classList.toggle("is-companion", isCompanion(travelerId));
         item.style.borderLeftColor = color(travelerId);
-        item.addEventListener("click", () => {
-            const lineBounds = line.getBounds();
-            if (lineBounds.isValid()) {
-                map.fitBounds(lineBounds, {padding: [24, 24], maxZoom: 14});
-            }
-        });
+        item.addEventListener("click", () => selectTraveler(travelerId));
         legend.appendChild(item);
     }
     if (bounds.length === 1) {
         map.setView(bounds[0], 12);
     } else if (bounds.length > 1) {
         map.fitBounds(bounds, {padding: [28, 28], maxZoom: 14});
+    }
+}
+
+function selectTraveler(travelerId) {
+    selectedTravelerId = selectedTravelerId === travelerId ? null : travelerId;
+    for (const [id, traveler] of travelers) {
+        const active = selectedTravelerId === null || id === selectedTravelerId;
+        if (traveler.line) {
+            traveler.line.setStyle({
+                weight: active && selectedTravelerId !== null ? 5 : 3,
+                opacity: active ? 0.95 : 0.12
+            });
+            if (active && selectedTravelerId !== null) {
+                traveler.line.bringToFront();
+            }
+        }
+        for (const marker of traveler.markers) {
+            marker.setStyle({
+                opacity: active ? 1 : 0.15,
+                fillOpacity: active ? 0.95 : 0.08
+            });
+            if (active && selectedTravelerId !== null) {
+                marker.bringToFront();
+            }
+        }
+    }
+    for (const button of legend.querySelectorAll("button")) {
+        const id = Number(button.dataset.travelerId);
+        const selected = id === selectedTravelerId;
+        button.setAttribute("aria-pressed", String(selected));
+        button.classList.toggle("is-dim", selectedTravelerId !== null && !selected);
+    }
+    const line = travelers.get(travelerId)?.line;
+    if (selectedTravelerId !== null && line) {
+        const lineBounds = line.getBounds();
+        if (lineBounds.isValid()) {
+            map.fitBounds(lineBounds, {padding: [24, 24], maxZoom: 14});
+        }
     }
 }
 

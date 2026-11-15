@@ -3,6 +3,7 @@ package ru.kotletkin.positiongen.calculation.dto;
 import ru.kotletkin.positiongen.calculation.model.CalculationStatus;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record CalculationDTO(
@@ -23,6 +24,7 @@ public record CalculationDTO(
         String errorMessage,
         Integer reportCount,
         Long xyByteSize,
-        Long placesByteSize
+        Long placesByteSize,
+        List<Integer> coTravelerIds
 ) {
 }

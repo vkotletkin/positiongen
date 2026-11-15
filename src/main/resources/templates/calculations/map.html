@@ -22,7 +22,12 @@
         <ul class="meta">
             <li th:text="|Dimension ${calculation.dimension}, fractal ${calculation.fractalDimension}|"></li>
             <li th:text="|Places ${calculation.pointCount}|"></li>
-            <li th:text="|Travelers ${calculation.travelerCount}, on one trajectory ${calculation.coTravelerCount}|"></li>
+            <li th:text="|Travelers ${calculation.travelerCount}, companions on one route ${calculation.coTravelerCount}|"></li>
+            <li id="companions" th:if="${calculation.coTravelerIds != null and !#lists.isEmpty(calculation.coTravelerIds)}">
+                Companions:
+                <span th:each="companionId, stat : ${calculation.coTravelerIds}"
+                      th:text="${stat.last} ? ${companionId} : ${companionId} + ', '"></span>
+            </li>
             <li th:text="|Window ${calculation.days} days, mean ${calculation.meanReportCount} reports|"></li>
             <li th:text="|Plane origin: ${originLatitude}, ${originLongitude}|"></li>
         </ul>
@@ -31,13 +36,15 @@
             <a class="button secondary" th:href="@{|/api/calculations/${calculation.id}/files/places|}">PLACES.csv</a>
         </div>
         <div id="legend"></div>
+        <p class="hint">Companions are a random group that shares one route. A finished calculation lists their ids.</p>
         <p class="hint">Model coordinates are kilometers along the first two axes. On the map they are offset from the
             origin so the lines have a place to sit.</p>
     </aside>
     <div id="map"
          th:data-id="${calculation.id}"
          th:data-origin-lat="${originLatitude}"
-         th:data-origin-lon="${originLongitude}"></div>
+         th:data-origin-lon="${originLongitude}"
+         th:data-companions="${calculation.coTravelerIds != null ? #strings.listJoin(calculation.coTravelerIds, ',') : ''}"></div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
