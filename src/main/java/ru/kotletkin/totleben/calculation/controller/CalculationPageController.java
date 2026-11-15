@@ -42,7 +42,7 @@ public class CalculationPageController {
 
     @GetMapping("/calculations/{id}/map")
     public String map(@PathVariable final UUID id, final Model model) {
-        model.addAttribute("calculation", calculations.get(id));
+        model.addAttribute("calculation", calculations.getCalculationByUuid(id));
         model.addAttribute("originLatitude", mapProperties.originLatitude());
         model.addAttribute("originLongitude", mapProperties.originLongitude());
         model.addAttribute("maxPoints", mapProperties.maxPoints());
@@ -52,7 +52,7 @@ public class CalculationPageController {
 
     private String list(final Model model, final CalculationRequestDTO form) {
         model.addAttribute("form", form);
-        model.addAttribute("requests", calculations.list());
+        model.addAttribute("requests", calculations.getAllCalculations());
         model.addAttribute("constants", calculator.fixedParameters());
         return "calculations/list";
     }

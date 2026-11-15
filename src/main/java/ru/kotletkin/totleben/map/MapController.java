@@ -16,11 +16,11 @@ import java.util.UUID;
 @Tag(name = "Map", description = "Отрисовка результатов на карте")
 public class MapController {
 
-    private final MapService maps;
+    private final MapService mapService;
 
     @GetMapping
     @Operation(summary = "Calculation track as GeoJSON")
-    public GeoJsonResponse geoJson(@PathVariable final UUID id) {
-        return maps.geoJson(id);
+    public GeoJsonResponse getGeoJsonById(@PathVariable final UUID id) {
+        return mapService.geoJson(id);
     }
 }

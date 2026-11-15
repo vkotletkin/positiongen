@@ -11,8 +11,8 @@ import ru.kotletkin.totleben.calculation.mapper.CalculationMapper;
 import ru.kotletkin.totleben.calculation.model.CalculationRequest;
 import ru.kotletkin.totleben.calculation.model.CalculationStatus;
 import ru.kotletkin.totleben.calculation.repository.CalculationRequestRepository;
-import ru.kotletkin.totleben.result.StoredArtifacts;
 import ru.kotletkin.totleben.result.CalculationResult;
+import ru.kotletkin.totleben.result.StoredArtifacts;
 import ru.kotletkin.totleben.simulation.SimulationRequest;
 
 import java.time.Instant;
@@ -23,13 +23,13 @@ import static ru.kotletkin.totleben.exception.NotFoundException.notFoundExceptio
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CalculationService {
 
     private final CalculationRequestRepository requests;
     private final CalculationMapper mapper;
 
-    @Transactional
     public UUID submit(final CalculationRequestDTO request) {
         CalculationRequest entity = new CalculationRequest();
         entity.setId(UUID.randomUUID());
@@ -48,33 +48,31 @@ public class CalculationService {
         return entity.getId();
     }
 
-    @Transactional(readOnly = true)
-    public CalculationDTO get(final UUID id) {
-        return mapper.toDto(load(id));
+    public CalculationDTO getCalculationByUuid(final UUID id) {
+        return mapper.toDto(loadCalculationByUuid(id));
     }
 
-    @Transactional(readOnly = true)
-    public List<CalculationDTO> list() {
+    // TODO: add pagination
+    public List<CalculationDTO> getAllCalculations() {
         return requests.findAllByOrderByCreatedAtDesc().stream()
                 .map(mapper::toDto)
                 .toList();
     }
 
-    @Transactional(readOnly = true)
-    public SimulationRequest simulationRequest(final UUID id) {
-        return mapper.toSimulationRequest(load(id));
+    public SimulationRequest getSimulationRequestByUuid(final UUID id) {
+        return mapper.toSimulationRequest(loadCalculationByUuid(id));
     }
 
     @Transactional
     public void markRunning(final UUID id) {
-        CalculationRequest request = load(id);
+        CalculationRequest request = loadCalculationByUuid(id);
         request.setStatus(CalculationStatus.RUNNING);
         request.setStartedAt(Instant.now());
     }
 
     @Transactional
     public void markSucceeded(final UUID id, final StoredArtifacts artifacts) {
-        CalculationRequest request = load(id);
+        CalculationRequest request = loadCalculationByUuid(id);
         request.setStatus(CalculationStatus.SUCCEEDED);
         request.setFinishedAt(Instant.now());
         request.setErrorMessage(null);
@@ -92,13 +90,13 @@ public class CalculationService {
 
     @Transactional
     public void markFailed(final UUID id, final String message) {
-        CalculationRequest request = load(id);
+        CalculationRequest request = loadCalculationByUuid(id);
         request.setStatus(CalculationStatus.FAILED);
         request.setFinishedAt(Instant.now());
         request.setErrorMessage(message);
     }
 
-    private CalculationRequest load(final UUID id) {
-        return requests.findById(id).orElseThrow(notFoundException("Расчёт не найден"));
+    private CalculationRequest loadCalculationByUuid(final UUID id) {
+        return requests.findById(id).orElseThrow(notFoundException("Calculation with id {0} not found", id));
     }
 }

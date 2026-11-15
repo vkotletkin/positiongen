@@ -27,8 +27,8 @@ public class CalculationController {
 
     @GetMapping
     @Operation(summary = "List calculations")
-    public List<CalculationDTO> listCalculations() {
-        return calculationService.list();
+    public List<CalculationDTO> getAllCalculations() {
+        return calculationService.getAllCalculations();
     }
 
     @PostMapping
@@ -41,6 +41,6 @@ public class CalculationController {
     @GetMapping("/{id}")
     @Operation(summary = "Get calculation")
     public CalculationDTO getCalculation(@PathVariable final UUID id) {
-        return calculationService.get(id);
+        return calculationService.getCalculationByUuid(id);
     }
 }

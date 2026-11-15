@@ -11,6 +11,7 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfiguration {
 
+    // TODO: maybe increase pool size?
     @Bean(name = "calculationExecutor")
     public Executor calculationExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

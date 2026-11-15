@@ -20,29 +20,29 @@ public class CalculationJob {
     private final FractalRabbitCalculator calculator;
     private final ResultArchive results;
 
-    @Async("calculationExecutor")
-    public void execute(final UUID id) {
-        try {
-            calculations.markRunning(id);
-            try (SimulationOutput output = calculator.run(calculations.simulationRequest(id))) {
-                StoredArtifacts artifacts = results.store(id, output);
-                calculations.markSucceeded(id, artifacts);
-            }
-        } catch (Exception ex) {
-            log.error("Calculation {} failed", id, ex);
-            try {
-                calculations.markFailed(id, message(ex));
-            } catch (RuntimeException nested) {
-                log.error("Could not store failure for {}", id, nested);
-            }
-        }
-    }
-
     private static String message(final Exception ex) {
         String text = ex.getMessage();
         if (text == null || text.isBlank()) {
             text = ex.getClass().getSimpleName();
         }
         return text.length() > 2000 ? text.substring(0, 2000) : text;
+    }
+
+    @Async("calculationExecutor")
+    public void execute(final UUID uuid) {
+        try {
+            calculations.markRunning(uuid);
+            try (SimulationOutput output = calculator.run(calculations.getSimulationRequestByUuid(uuid))) {
+                StoredArtifacts artifacts = results.store(uuid, output);
+                calculations.markSucceeded(uuid, artifacts);
+            }
+        } catch (Exception ex) {
+            log.error("Calculation {} failed", uuid, ex);
+            try {
+                calculations.markFailed(uuid, message(ex));
+            } catch (RuntimeException nested) {
+                log.error("Could not store failure for {}", uuid, nested);
+            }
+        }
     }
 }

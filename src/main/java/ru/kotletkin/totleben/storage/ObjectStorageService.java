@@ -2,7 +2,7 @@ package ru.kotletkin.totleben.storage;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.kotletkin.totleben.config.StorageConfig;
 import ru.kotletkin.totleben.exception.StorageException;
 import software.amazon.awssdk.core.exception.SdkException;
@@ -17,7 +17,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Duration;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class ObjectStorageService {
 

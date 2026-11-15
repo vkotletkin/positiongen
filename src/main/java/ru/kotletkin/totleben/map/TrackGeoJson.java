@@ -27,6 +27,7 @@ public final class TrackGeoJson {
         int kept = 0;
         boolean truncated = false;
         try (Reader reader = new InputStreamReader(csv, StandardCharsets.UTF_8)) {
+            // TODO: withFirstRecordAsHeader()' is deprecated
             for (CSVRecord row : CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
                 if (kept >= maxPoints) {
                     truncated = true;

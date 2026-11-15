@@ -17,6 +17,6 @@ public class CalculationLauncher {
     public CalculationDTO launch(final CalculationRequestDTO request) {
         UUID id = calculationService.submit(request);
         calculationJob.execute(id);
-        return calculationService.get(id);
+        return calculationService.getCalculationByUuid(id);
     }
 }
