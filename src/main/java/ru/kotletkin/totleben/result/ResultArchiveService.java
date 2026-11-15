@@ -19,12 +19,12 @@ import static ru.kotletkin.totleben.exception.NotFoundException.notFoundExceptio
 
 @Service
 @RequiredArgsConstructor
-public class ResultArchive {
+public class ResultArchiveService {
 
     private final ObjectStorageService objectStorage;
     private final CalculationRequestRepository requests;
 
-    public StoredArtifacts store(final UUID calculationId, final SimulationOutput output) {
+    public StoredArtifacts saveToStore(final UUID calculationId, final SimulationOutput output) {
         String xyKey = "calculations/" + calculationId + "/XY.csv";
         String placesKey = "calculations/" + calculationId + "/PLACES.csv";
         objectStorage.put(xyKey, output.xyCsv(), "text/csv");
@@ -41,7 +41,7 @@ public class ResultArchive {
         }
     }
 
-    public StoredArtifacts files(final UUID calculationId) {
+    public StoredArtifacts getArtifactsInfo(final UUID calculationId) {
         CalculationResult result = readyResult(calculationId);
         return new StoredArtifacts(
                 result.getXyObjectKey(),
@@ -51,7 +51,7 @@ public class ResultArchive {
                 result.getReportCount());
     }
 
-    public InputStream open(final String objectKey) {
+    public InputStream openFileByObjectKey(final String objectKey) {
         return objectStorage.open(objectKey);
     }
 

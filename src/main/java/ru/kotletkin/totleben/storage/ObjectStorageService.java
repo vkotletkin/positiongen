@@ -9,13 +9,9 @@ import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Path;
-import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -47,25 +43,6 @@ public class ObjectStorageService {
                     .build(), file);
         } catch (SdkException ex) {
             throw new StorageException("Failed to write object", ex);
-        }
-    }
-
-    public URL presignGet(final String key, final Duration ttl) {
-        try {
-            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(storageConfig.bucket())
-                    .key(key)
-                    .build();
-
-            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(ttl)
-                    .getObjectRequest(getObjectRequest)
-                    .build();
-
-            PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
-            return presignedRequest.url();
-        } catch (SdkException ex) {
-            throw new StorageException("Failed to generate presigned GET url", ex);
         }
     }
 

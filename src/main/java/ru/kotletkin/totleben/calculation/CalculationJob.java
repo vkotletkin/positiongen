@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import ru.kotletkin.totleben.result.ResultArchive;
+import ru.kotletkin.totleben.result.ResultArchiveService;
 import ru.kotletkin.totleben.result.StoredArtifacts;
 import ru.kotletkin.totleben.simulation.FractalRabbitCalculator;
 import ru.kotletkin.totleben.simulation.SimulationOutput;
@@ -18,7 +18,7 @@ public class CalculationJob {
 
     private final CalculationService calculations;
     private final FractalRabbitCalculator calculator;
-    private final ResultArchive results;
+    private final ResultArchiveService results;
 
     private static String message(final Exception ex) {
         String text = ex.getMessage();
@@ -33,7 +33,7 @@ public class CalculationJob {
         try {
             calculations.markRunning(uuid);
             try (SimulationOutput output = calculator.run(calculations.getSimulationRequestByUuid(uuid))) {
-                StoredArtifacts artifacts = results.store(uuid, output);
+                StoredArtifacts artifacts = results.saveToStore(uuid, output);
                 calculations.markSucceeded(uuid, artifacts);
             }
         } catch (Exception ex) {

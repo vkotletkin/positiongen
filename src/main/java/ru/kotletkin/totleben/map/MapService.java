@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.kotletkin.totleben.config.MapProperties;
 import ru.kotletkin.totleben.exception.StorageException;
-import ru.kotletkin.totleben.result.ResultArchive;
+import ru.kotletkin.totleben.result.ResultArchiveService;
 import ru.kotletkin.totleben.result.StoredArtifacts;
 
 import java.io.IOException;
@@ -15,12 +15,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MapService {
 
-    private final ResultArchive results;
+    private final ResultArchiveService results;
     private final MapProperties properties;
 
     public GeoJsonResponse geoJson(final UUID calculationId) {
-        StoredArtifacts files = results.files(calculationId);
-        try (InputStream input = results.open(files.xyObjectKey())) {
+        StoredArtifacts files = results.getArtifactsInfo(calculationId);
+        try (InputStream input = results.openFileByObjectKey(files.xyObjectKey())) {
             return TrackGeoJson.fromCsv(
                     input,
                     files.reportCount(),

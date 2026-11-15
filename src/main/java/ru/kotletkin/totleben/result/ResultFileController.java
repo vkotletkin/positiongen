@@ -21,25 +21,25 @@ import java.util.UUID;
 @Tag(name = "Results", description = "Файлы результатов расчёта")
 public class ResultFileController {
 
-    private final ResultArchive results;
+    private final ResultArchiveService results;
 
     @GetMapping("/xy")
     @Operation(summary = "Download coordinate CSV")
-    public ResponseEntity<StreamingResponseBody> xy(@PathVariable final UUID id) {
-        StoredArtifacts files = results.files(id);
+    public ResponseEntity<StreamingResponseBody> getXyFile(@PathVariable final UUID id) {
+        StoredArtifacts files = results.getArtifactsInfo(id);
         return download(new StoredObjectDTO(files.xyObjectKey(), "XY.csv", files.xyByteSize()));
     }
 
     @GetMapping("/places")
     @Operation(summary = "Download places CSV")
-    public ResponseEntity<StreamingResponseBody> places(@PathVariable final UUID id) {
-        StoredArtifacts files = results.files(id);
+    public ResponseEntity<StreamingResponseBody> getPlaceFile(@PathVariable final UUID id) {
+        StoredArtifacts files = results.getArtifactsInfo(id);
         return download(new StoredObjectDTO(files.placesObjectKey(), "PLACES.csv", files.placesByteSize()));
     }
 
     private ResponseEntity<StreamingResponseBody> download(final StoredObjectDTO file) {
         StreamingResponseBody body = output -> {
-            try (InputStream input = results.open(file.key())) {
+            try (InputStream input = results.openFileByObjectKey(file.key())) {
                 input.transferTo(output);
             }
         };
