@@ -42,6 +42,13 @@ public class CalculationController {
         return calculationLauncher.launch(request);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete calculation")
+    public void deleteCalculationByUUID(@PathVariable(name = "id") final UUID uuid) {
+        calculationService.deleteCalculationByUUID(uuid);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get calculation")
     public CalculationDTO getCalculation(@PathVariable final UUID id) {

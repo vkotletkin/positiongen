@@ -56,6 +56,10 @@ public class CalculationService {
         return entity.getId();
     }
 
+    public void deleteCalculationByUUID(final UUID uuid) {
+        requests.deleteById(uuid);
+    }
+
     public CalculationDTO getCalculationByUuid(final UUID id) {
         return mapper.toDto(loadCalculationByUuid(id));
     }
