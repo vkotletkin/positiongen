@@ -4,10 +4,27 @@ services:
     ports:
       - "8080:8080"
     environment:
+      SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/positiongen
       SPRING_DATASOURCE_USERNAME: positiongen
       SPRING_DATASOURCE_PASSWORD: positiongen
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_THYMELEAF_CACHE: "true"
+      SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY: positiongen
+      SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY: positiongen-secret
+      SPRING_CLOUD_AWS_REGION_STATIC: us-east-1
       SPRING_CLOUD_AWS_S3_ENDPOINT: http://seaweedfs:8333
+      SPRING_CLOUD_AWS_S3_REGION: us-east-1
+      SPRING_CLOUD_AWS_S3_PATH_STYLE_ACCESS_ENABLED: "true"
+      SPRING_CLOUD_AWS_S3_CHUNKED_ENCODING_ENABLED: "false"
+      SPRING_CLOUD_AWS_S3_CHECKSUM_VALIDATION_ENABLED: "false"
+      APP_STORAGE_BUCKET: positiongen-results
+      APP_MAP_ORIGIN_LATITUDE: "59.9343"
+      APP_MAP_ORIGIN_LONGITUDE: "30.3351"
+      APP_MAP_MAX_POINTS: "12000"
+      APP_MAP_TILE_URL: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      APP_MAP_TILE_ATTRIBUTION: "© OpenStreetMap"
+      APP_CALCULATION_POOL_SIZE: "2"
     depends_on:
       postgres:
         condition: service_healthy

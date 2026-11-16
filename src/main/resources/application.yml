@@ -2,12 +2,12 @@ spring:
   application:
     name: positiongen
   datasource:
-    url: jdbc:postgresql://localhost:5433/positiongen
-    username: positiongen
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/positiongen}
+    username: ${SPRING_DATASOURCE_USERNAME:positiongen}
     password: ${SPRING_DATASOURCE_PASSWORD:positiongen}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     open-in-view: false
     properties:
       hibernate:
@@ -19,32 +19,32 @@ spring:
         default-page-size: 20
         max-page-size: 100
   thymeleaf:
-    cache: false
+    cache: ${SPRING_THYMELEAF_CACHE:false}
   cloud:
     aws:
       credentials:
-        access-key: positiongen
+        access-key: ${SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY:positiongen}
         secret-key: ${SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY:positiongen-secret}
       region:
-        static: us-east-1
+        static: ${SPRING_CLOUD_AWS_REGION_STATIC:us-east-1}
       s3:
-        endpoint: http://localhost:8333
-        region: us-east-1
-        path-style-access-enabled: true
-        chunked-encoding-enabled: false
-        checksum-validation-enabled: false
+        endpoint: ${SPRING_CLOUD_AWS_S3_ENDPOINT:http://localhost:8333}
+        region: ${SPRING_CLOUD_AWS_S3_REGION:us-east-1}
+        path-style-access-enabled: ${SPRING_CLOUD_AWS_S3_PATH_STYLE_ACCESS_ENABLED:true}
+        chunked-encoding-enabled: ${SPRING_CLOUD_AWS_S3_CHUNKED_ENCODING_ENABLED:false}
+        checksum-validation-enabled: ${SPRING_CLOUD_AWS_S3_CHECKSUM_VALIDATION_ENABLED:false}
 app:
   storage:
-    bucket: positiongen-results
+    bucket: ${APP_STORAGE_BUCKET:positiongen-results}
   map:
-    origin-latitude: 59.9343
-    origin-longitude: 30.3351
-    max-points: 12000
+    origin-latitude: ${APP_MAP_ORIGIN_LATITUDE:59.9343}
+    origin-longitude: ${APP_MAP_ORIGIN_LONGITUDE:30.3351}
+    max-points: ${APP_MAP_MAX_POINTS:12000}
     # Public tiles by default. For an air-gapped network set APP_MAP_TILE_URL
     # to an internal tile server, or leave it empty to draw tracks without a basemap.
     tile-url: "${APP_MAP_TILE_URL:https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png}"
     tile-attribution: "${APP_MAP_TILE_ATTRIBUTION:© OpenStreetMap}"
   calculation:
-    pool-size: 2
+    pool-size: ${APP_CALCULATION_POOL_SIZE:2}
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
