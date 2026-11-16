@@ -17,45 +17,12 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
 
 /**
- * Runs the FRACTALRABBIT generators in the same order and with the same fixed
- * constants as {@link fractalrabbit.MainClassCyberBadger}. The generator classes
- * themselves are not modified.
+ * Runs the FRACTALRABBIT generators in the same order as
+ * {@link fractalrabbit.MainClassCyberBadger}. Model parameters come from the
+ * request. The generator classes themselves are not modified.
  */
 @Component
 public class FractalRabbitCalculator {
-
-    /**
-     * Restart rate for the agoraphobic point process.
-     */
-    static final double RESTART_RATE = 0.75;
-    /**
-     * Distance-to-rate exponent for the retro-preferential process.
-     */
-    static final double DISTANCE_EXPONENT = -2.0;
-    /**
-     * Traveler speed bound, kilometers per hour.
-     */
-    static final double MAX_KILOMETERS_PER_HOUR = 100.0;
-    /**
-     * Kilometers represented by one abstract distance unit.
-     */
-    static final double KILOMETERS_PER_UNIT = 20.0;
-    /**
-     * Mean of the Poisson exploration parameter.
-     */
-    static final double PHI_MEAN = 10.0;
-    /**
-     * Mean trajectory length.
-     */
-    static final double STEPS_MEAN = 100.0;
-    /**
-     * Lower cutoff for truncated Pareto inter-report gaps.
-     */
-    static final double REPORT_DELTA = 0.001;
-    /**
-     * Tail exponent for truncated Pareto inter-report gaps.
-     */
-    static final double REPORT_ALPHA = -1.5;
 
     private final Random random = new Random();
 
@@ -81,6 +48,7 @@ public class FractalRabbitCalculator {
     private static int writeCoordinateCsv(AgoraphobicPoints points,
                                           Map<Integer, List<Double>> reportTimes,
                                           Map<Integer, List<Integer>> reportPlaces,
+                                          double kilometersPerUnit,
                                           Path output) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(output);
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
@@ -92,8 +60,8 @@ public class FractalRabbitCalculator {
                 List<Integer> places = reportPlaces.get(traveler);
                 for (int index = 0; index < times.size(); index++) {
                     int place = places.get(index);
-                    double x = KILOMETERS_PER_UNIT * points.getPoints().get(place)[0];
-                    double y = KILOMETERS_PER_UNIT * points.getPoints().get(place)[1];
+                    double x = kilometersPerUnit * points.getPoints().get(place)[0];
+                    double y = kilometersPerUnit * points.getPoints().get(place)[1];
                     csvPrinter.printRecord(traveler, times.get(index), x, y);
                     lines++;
                 }
@@ -138,32 +106,23 @@ public class FractalRabbitCalculator {
                 PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
     }
 
-    public FixedParameters fixedParameters() {
-        return new FixedParameters(
-                RESTART_RATE,
-                DISTANCE_EXPONENT,
-                MAX_KILOMETERS_PER_HOUR,
-                KILOMETERS_PER_UNIT,
-                PHI_MEAN,
-                STEPS_MEAN,
-                REPORT_DELTA,
-                REPORT_ALPHA);
-    }
-
     public SimulationOutput run(SimulationRequest request) throws IOException {
         AgoraphobicPoints points = new AgoraphobicPoints(
                 request.pointCount(),
                 request.dimension(),
                 request.fractalDimension(),
-                RESTART_RATE);
+                request.restartRate());
         points.generatePoints();
         EuclideanPoint[] metricPoints = new EuclideanPoint[points.getPoints().size()];
         Arrays.setAll(metricPoints, index -> new EuclideanPoint(points.getPoints().get(index)));
-        Retropreferential retropreferential = new Retropreferential(metricPoints, DISTANCE_EXPONENT);
-        SporadicReporter reporter = new SporadicReporter(metricPoints, MAX_KILOMETERS_PER_HOUR, KILOMETERS_PER_UNIT);
+        Retropreferential retropreferential = new Retropreferential(metricPoints, request.distanceExponent());
+        SporadicReporter reporter = new SporadicReporter(
+                metricPoints,
+                request.maxKilometersPerHour(),
+                request.kilometersPerUnit());
 
-        PoissonVariate phiRandom = new PoissonVariate(PHI_MEAN);
-        PoissonVariate stepsRandom = new PoissonVariate(STEPS_MEAN);
+        PoissonVariate phiRandom = new PoissonVariate(request.phiMean());
+        PoissonVariate stepsRandom = new PoissonVariate(request.stepsMean());
         TravelerAssignment assignment = assignTravelers(request.coTravelerCount(), request.travelerCount());
         Map<Integer, Integer> trajectoryAssignment = assignment.trajectories();
 
@@ -185,8 +144,8 @@ public class FractalRabbitCalculator {
             reporter.generateReports(
                     visits,
                     countRandom.generate(),
-                    REPORT_DELTA,
-                    REPORT_ALPHA,
+                    request.reportDelta(),
+                    request.reportAlpha(),
                     request.days());
             reportTimes.put(entry.getKey(), List.copyOf(reporter.getReportTimes()));
             reportPlaces.put(entry.getKey(), List.copyOf(reporter.getReportPlaces()));
@@ -196,7 +155,7 @@ public class FractalRabbitCalculator {
         Path xyCsv = directory.resolve("XY.csv");
         Path placesCsv = directory.resolve("PLACES.csv");
         try {
-            int xyRows = writeCoordinateCsv(points, reportTimes, reportPlaces, xyCsv);
+            int xyRows = writeCoordinateCsv(points, reportTimes, reportPlaces, request.kilometersPerUnit(), xyCsv);
             int placeRows = writePlacesCsv(reportTimes, reportPlaces, placesCsv);
             if (xyRows != placeRows) {
                 throw new IllegalStateException("XY.csv and PLACES.csv have different row counts");
@@ -211,17 +170,5 @@ public class FractalRabbitCalculator {
     }
 
     private record TravelerAssignment(Map<Integer, Integer> trajectories, List<Integer> coTravelerIds) {
-    }
-
-    public record FixedParameters(
-            double restartRate,
-            double distanceExponent,
-            double maxKilometersPerHour,
-            double kilometersPerUnit,
-            double phiMean,
-            double stepsMean,
-            double reportDelta,
-            double reportAlpha
-    ) {
     }
 }

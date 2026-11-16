@@ -6,7 +6,15 @@ public record SimulationRequest(
         int pointCount,
         int travelerCount,
         int coTravelerCount,
-        double days,
-        double meanReportCount
+        int days,
+        int meanReportCount,
+        double restartRate,
+        double distanceExponent,
+        double maxKilometersPerHour,
+        double kilometersPerUnit,
+        double phiMean,
+        double stepsMean,
+        double reportDelta,
+        double reportAlpha
 ) {
 }

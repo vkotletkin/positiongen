@@ -2,7 +2,7 @@ spring:
   application:
     name: positiongen
   datasource:
-    url: jdbc:postgresql://localhost:5432/positiongen
+    url: jdbc:postgresql://localhost:5433/positiongen
     username: positiongen
     password: ${SPRING_DATASOURCE_PASSWORD:positiongen}
   jpa:
@@ -33,7 +33,6 @@ spring:
         path-style-access-enabled: true
         chunked-encoding-enabled: false
         checksum-validation-enabled: false
-
 app:
   storage:
     bucket: positiongen-results
@@ -47,3 +46,5 @@ app:
     tile-attribution: "${APP_MAP_TILE_ATTRIBUTION:© OpenStreetMap}"
   calculation:
     pool-size: 2
+server:
+  port: 8081

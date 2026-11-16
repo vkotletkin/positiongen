@@ -27,6 +27,10 @@
                       th:text="${stat.last} ? ${companionId} : ${companionId} + ', '"></span>
             </li>
             <li th:text="|Window ${calculation.days} days, mean ${calculation.meanReportCount} reports|"></li>
+            <li th:text="|New-cluster rate ${calculation.restartRate}, distance exponent ${calculation.distanceExponent}|"></li>
+            <li th:text="|Speed ${calculation.maxKilometersPerHour} km/h, ${calculation.kilometersPerUnit} km per model unit|"></li>
+            <li th:text="|Mean route ${calculation.stepsMean} steps, exploration ${calculation.phiMean}|"></li>
+            <li th:text="|Pareto lower bound ${calculation.reportDelta}, tail ${calculation.reportAlpha}|"></li>
             <li th:text="|Plane origin: ${originLatitude}, ${originLongitude}|"></li>
         </ul>
         <div id="downloads" class="downloads" th:hidden="${calculation.status.name() != 'SUCCEEDED'}">

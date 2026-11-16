@@ -62,20 +62,53 @@
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('meanReportCount')}" th:errors="*{meanReportCount}"></p>
 
+                <details class="model">
+                    <summary>Model parameters</summary>
+                    <div class="model-fields">
+                    <label>New-cluster rate
+                        <input type="number" th:field="*{restartRate}" min="0" max="10000" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('restartRate')}" th:errors="*{restartRate}"></p>
+
+                    <label>Distance exponent
+                        <input type="number" th:field="*{distanceExponent}" min="-20" max="20" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('distanceExponent')}" th:errors="*{distanceExponent}"></p>
+
+                    <label>Speed limit, km/h
+                        <input type="number" th:field="*{maxKilometersPerHour}" min="0.001" max="5000" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('maxKilometersPerHour')}" th:errors="*{maxKilometersPerHour}"></p>
+
+                    <label>Kilometers per model unit
+                        <input type="number" th:field="*{kilometersPerUnit}" min="0.001" max="100000" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('kilometersPerUnit')}" th:errors="*{kilometersPerUnit}"></p>
+
+                    <label>Mean trajectory length
+                        <input type="number" th:field="*{stepsMean}" min="1" max="100000" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('stepsMean')}" th:errors="*{stepsMean}"></p>
+
+                    <label>Mean exploration parameter
+                        <input type="number" th:field="*{phiMean}" min="0" max="10000" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('phiMean')}" th:errors="*{phiMean}"></p>
+
+                    <label>Pareto lower bound
+                        <input type="number" th:field="*{reportDelta}" min="0.0000001" max="0.999" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('reportDelta')}" th:errors="*{reportDelta}"></p>
+
+                    <label>Pareto tail
+                        <input type="number" th:field="*{reportAlpha}" min="-20" max="-1.001" step="any" required>
+                    </label>
+                    <p class="error" th:if="${#fields.hasErrors('reportAlpha')}" th:errors="*{reportAlpha}"></p>
+                    </div>
+                </details>
+
                 <button type="submit">Run calculation</button>
             </form>
-            <details>
-                <summary>Fixed model parameters</summary>
-                <ul>
-                    <li th:text="|New-cluster rate ${constants.restartRate}|"></li>
-                    <li th:text="|Distance exponent ${constants.distanceExponent}|"></li>
-                    <li th:text="|Speed limit ${constants.maxKilometersPerHour} km/h|"></li>
-                    <li th:text="|${constants.kilometersPerUnit} km per model unit|"></li>
-                    <li th:text="|Mean trajectory length ${constants.stepsMean} steps|"></li>
-                    <li th:text="|Mean exploration parameter ${constants.phiMean}|"></li>
-                    <li th:text="|Pareto: lower bound ${constants.reportDelta}, tail ${constants.reportAlpha}|"></li>
-                </ul>
-            </details>
         </section>
 
         <section class="table-wrap">
@@ -106,14 +139,16 @@
                                   th:text="${stat.last} ? ${companionId} : ${companionId} + ', '"></span>
                         </div>
                     </td>
-                    <td th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
-                    <td class="actions">
-                        <a th:href="@{|/calculations/${item.id}/map|}">Map</a>
-                        <form class="inline" method="post" th:action="@{|/calculations/${item.id}/delete|}"
-                              onsubmit="return confirm('Delete this calculation?');">
-                            <input type="hidden" name="page" th:value="${calculationPage.number}">
-                            <button type="submit" class="danger">Delete</button>
-                        </form>
+                    <td class="num" th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
+                    <td class="row-actions">
+                        <div class="actions">
+                            <a th:href="@{|/calculations/${item.id}/map|}">Map</a>
+                            <form class="inline" method="post" th:action="@{|/calculations/${item.id}/delete|}"
+                                  onsubmit="return confirm('Delete this calculation?');">
+                                <input type="hidden" name="page" th:value="${calculationPage.number}">
+                                <button type="submit" class="danger">Delete</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
@@ -129,6 +164,42 @@
             </nav>
         </section>
     </div>
+    <section class="panel guide">
+        <h2>What the parameters do</h2>
+        <p class="hint">Each request runs FRACTALRABBIT with the values in the form. The generator itself is unchanged.</p>
+        <dl>
+            <dt>Space dimension</dt>
+            <dd>Dimension of the place coordinates. The map draws only the first two axes. It must be greater than the fractal dimension.</dd>
+            <dt>Fractal dimension</dt>
+            <dd>How tightly places clump. A smaller value packs them into tighter groups. A value closer to the space dimension spreads them more evenly.</dd>
+            <dt>Number of places</dt>
+            <dd>How many locations are generated. More places make the routes denser and the calculation slower.</dd>
+            <dt>Travelers</dt>
+            <dd>How many people are simulated. Companions share one route; everyone else gets a route of their own.</dd>
+            <dt>Companions on one route</dt>
+            <dd>A random group of this size follows the same sequence of places. The finished calculation lists their ids. The count cannot exceed the number of travelers.</dd>
+            <dt>Observation window</dt>
+            <dd>Whole days in which reports may fall. Travel time is subtracted first. If the window is shorter than the trip, that traveler produces no reports.</dd>
+            <dt>Mean report count</dt>
+            <dd>Average number of reports per traveler. Each traveler draws a Poisson count around this integer, so the actual number varies.</dd>
+            <dt>New-cluster rate</dt>
+            <dd>While places are built, the rate at which the next place starts a new clump at the origin instead of attaching near an existing place. Higher values make more separate clusters. Zero keeps growing the clusters already formed.</dd>
+            <dt>Distance exponent</dt>
+            <dd>How strongly a step prefers nearby places. The rate toward another place is its distance raised to this power. A more negative value, such as −4 instead of −2, makes long jumps rare. A positive value prefers distant places.</dd>
+            <dt>Speed limit</dt>
+            <dd>Maximum speed in kilometers per hour. A lower limit makes each hop take longer, so more of the observation window is spent traveling and fewer reports fit.</dd>
+            <dt>Kilometers per model unit</dt>
+            <dd>Converts one abstract distance unit into kilometers. A larger value spreads the tracks farther on the map and makes the same hops take longer.</dd>
+            <dt>Mean trajectory length</dt>
+            <dd>Average number of stops on a route, drawn from a Poisson distribution. Longer routes visit more places.</dd>
+            <dt>Mean exploration parameter</dt>
+            <dd>Average eagerness to visit a place not seen yet. A higher value covers more new places. A lower value loops among places already visited.</dd>
+            <dt>Pareto lower bound</dt>
+            <dd>Shortest allowed gap between reports, as a fraction of the time left after travel. The upper cutoff is 1. A smaller bound lets reports bunch into tighter bursts.</dd>
+            <dt>Pareto tail</dt>
+            <dd>Shape of the gaps between reports. It must be less than −1. Closer to −1, long silences are more common and reports arrive in sharper bursts. A more negative value makes the gaps more even.</dd>
+        </dl>
+    </section>
     <p class="footer">Calculation is FRACTALRABBIT, R. W. R. Darling. The generator algorithm is unchanged.</p>
 </main>
 <script th:if="${requests.?[status.name() == 'PENDING' or status.name() == 'RUNNING'].size() > 0}">

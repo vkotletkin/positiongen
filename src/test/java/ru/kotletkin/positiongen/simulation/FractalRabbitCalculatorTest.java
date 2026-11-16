@@ -18,7 +18,8 @@ class FractalRabbitCalculatorTest {
     @Test
     void writesBothResultFilesAndAMapTrack() throws Exception {
         FractalRabbitCalculator calculator = new FractalRabbitCalculator();
-        SimulationRequest request = new SimulationRequest(2, 1.33, 40, 3, 1, 14, 8);
+        SimulationRequest request = new SimulationRequest(
+                2, 1.33, 40, 3, 1, 14, 8, 0.75, -2.0, 100.0, 20.0, 10.0, 100.0, 0.001, -1.5);
 
         try (SimulationOutput output = calculator.run(request)) {
             assertTrue(output.reportCount() > 0, "expected reports within a 14-day window");

@@ -117,7 +117,9 @@ button.danger {
     background: transparent;
     color: var(--bad);
     border: 1px solid #e3c8c4;
-    padding: 6px 12px;
+    height: 32px;
+    padding: 0 12px;
+    line-height: 1;
 }
 
 form.inline {
@@ -125,11 +127,26 @@ form.inline {
     margin: 0;
 }
 
+.row-actions,
+.num {
+    vertical-align: middle;
+}
+
+.row-actions {
+    width: 1%;
+}
+
 .actions {
     display: flex;
     align-items: center;
     gap: 12px;
     white-space: nowrap;
+}
+
+.actions a {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
 }
 
 .error {
@@ -147,8 +164,38 @@ details {
     margin-top: 8px;
 }
 
+details.model summary {
+    cursor: pointer;
+}
+
+.model-fields {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+}
+
 details ul {
     padding-left: 18px;
+}
+
+.guide {
+    margin-top: 24px;
+}
+
+.guide dl {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 10px 18px;
+    margin: 14px 0 4px;
+}
+
+.guide dt {
+    font-weight: 600;
+}
+
+.guide dd {
+    margin: 0;
+    color: var(--muted);
 }
 
 .table-wrap {
@@ -314,7 +361,7 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] {
 }
 
 @media (max-width: 860px) {
-    .layout, .map-page {
+    .layout, .map-page, .guide dl {
         grid-template-columns: 1fr;
     }
 

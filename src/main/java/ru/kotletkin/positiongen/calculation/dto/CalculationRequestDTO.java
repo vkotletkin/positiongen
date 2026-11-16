@@ -30,11 +30,43 @@ public class CalculationRequestDTO {
     @Max(value = 5000, message = "At most 5,000 co-travelers")
     private int coTravelerCount = 1;
 
-    @DecimalMin(value = "0.001", message = "Observation window must be greater than zero")
-    @DecimalMax(value = "3650", message = "Observation window must be at most 3650 days")
-    private double days = 14;
+    @Min(value = 1, message = "Observation window must be at least 1 day")
+    @Max(value = 3650, message = "Observation window must be at most 3650 days")
+    private int days = 14;
 
-    @DecimalMin(value = "0.001", message = "Mean report count must be greater than zero")
-    @DecimalMax(value = "1000", message = "Mean report count must be at most 1000")
-    private double meanReportCount = 40;
+    @Min(value = 1, message = "Mean report count must be at least 1")
+    @Max(value = 1000, message = "Mean report count must be at most 1000")
+    private int meanReportCount = 40;
+
+    @DecimalMin(value = "0.0", message = "New-cluster rate cannot be negative")
+    @DecimalMax(value = "10000", message = "New-cluster rate must be at most 10000")
+    private double restartRate = 0.75;
+
+    @DecimalMin(value = "-20.0", message = "Distance exponent must be at least -20")
+    @DecimalMax(value = "20.0", message = "Distance exponent must be at most 20")
+    private double distanceExponent = -2.0;
+
+    @DecimalMin(value = "0.001", message = "Speed limit must be greater than zero")
+    @DecimalMax(value = "5000", message = "Speed limit must be at most 5000 km/h")
+    private double maxKilometersPerHour = 100.0;
+
+    @DecimalMin(value = "0.001", message = "Kilometers per model unit must be greater than zero")
+    @DecimalMax(value = "100000", message = "Kilometers per model unit must be at most 100000")
+    private double kilometersPerUnit = 20.0;
+
+    @DecimalMin(value = "0.0", message = "Mean exploration parameter cannot be negative")
+    @DecimalMax(value = "10000", message = "Mean exploration parameter must be at most 10000")
+    private double phiMean = 10.0;
+
+    @DecimalMin(value = "1.0", message = "Mean trajectory length must be at least 1")
+    @DecimalMax(value = "100000", message = "Mean trajectory length must be at most 100000")
+    private double stepsMean = 100.0;
+
+    @DecimalMin(value = "0.0000001", message = "Pareto lower bound must be greater than zero")
+    @DecimalMax(value = "0.999", message = "Pareto lower bound must be less than 1")
+    private double reportDelta = 0.001;
+
+    @DecimalMin(value = "-20.0", message = "Pareto tail must be at least -20")
+    @DecimalMax(value = "-1.0", inclusive = false, message = "Pareto tail must be less than -1")
+    private double reportAlpha = -1.5;
 }

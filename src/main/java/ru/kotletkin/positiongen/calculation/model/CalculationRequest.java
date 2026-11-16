@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import ru.kotletkin.positiongen.result.CalculationResult;
 
 import java.time.Instant;
@@ -42,10 +43,42 @@ public class CalculationRequest {
     private int coTravelerCount;
 
     @Column(nullable = false)
-    private double days;
+    private int days;
 
     @Column(nullable = false)
-    private double meanReportCount;
+    private int meanReportCount;
+
+    @Column(nullable = false)
+    @ColumnDefault("0.75")
+    private double restartRate;
+
+    @Column(nullable = false)
+    @ColumnDefault("-2.0")
+    private double distanceExponent;
+
+    @Column(nullable = false)
+    @ColumnDefault("100.0")
+    private double maxKilometersPerHour;
+
+    @Column(nullable = false)
+    @ColumnDefault("20.0")
+    private double kilometersPerUnit;
+
+    @Column(nullable = false)
+    @ColumnDefault("10.0")
+    private double phiMean;
+
+    @Column(nullable = false)
+    @ColumnDefault("100.0")
+    private double stepsMean;
+
+    @Column(nullable = false)
+    @ColumnDefault("0.001")
+    private double reportDelta;
+
+    @Column(nullable = false)
+    @ColumnDefault("-1.5")
+    private double reportAlpha;
 
     @Column(length = 2000)
     private String errorMessage;

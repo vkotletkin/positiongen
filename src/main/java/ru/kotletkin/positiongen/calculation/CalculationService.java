@@ -52,6 +52,14 @@ public class CalculationService {
         entity.setCoTravelerCount(request.getCoTravelerCount());
         entity.setDays(request.getDays());
         entity.setMeanReportCount(request.getMeanReportCount());
+        entity.setRestartRate(request.getRestartRate());
+        entity.setDistanceExponent(request.getDistanceExponent());
+        entity.setMaxKilometersPerHour(request.getMaxKilometersPerHour());
+        entity.setKilometersPerUnit(request.getKilometersPerUnit());
+        entity.setPhiMean(request.getPhiMean());
+        entity.setStepsMean(request.getStepsMean());
+        entity.setReportDelta(request.getReportDelta());
+        entity.setReportAlpha(request.getReportAlpha());
         entity.setCreatedAt(Instant.now());
         requests.save(entity);
         log.info("Calculation {} queued", entity.getId());

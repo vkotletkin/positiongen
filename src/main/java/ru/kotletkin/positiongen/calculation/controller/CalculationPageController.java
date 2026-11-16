@@ -17,7 +17,6 @@ import ru.kotletkin.positiongen.calculation.CalculationService;
 import ru.kotletkin.positiongen.calculation.dto.CalculationDTO;
 import ru.kotletkin.positiongen.calculation.dto.CalculationRequestDTO;
 import ru.kotletkin.positiongen.config.MapProperties;
-import ru.kotletkin.positiongen.simulation.FractalRabbitCalculator;
 
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ public class CalculationPageController {
 
     private final CalculationService calculations;
     private final CalculationLauncher launcher;
-    private final FractalRabbitCalculator calculator;
     private final MapProperties mapProperties;
 
     @GetMapping("/")
@@ -60,7 +58,6 @@ public class CalculationPageController {
         model.addAttribute("maxPoints", mapProperties.maxPoints());
         model.addAttribute("tileUrl", mapProperties.tileUrl());
         model.addAttribute("tileAttribution", mapProperties.tileAttribution());
-        model.addAttribute("constants", calculator.fixedParameters());
         return "calculations/map";
     }
 
@@ -72,7 +69,6 @@ public class CalculationPageController {
         model.addAttribute("form", form);
         model.addAttribute("requests", calculationPage.getContent());
         model.addAttribute("calculationPage", calculationPage);
-        model.addAttribute("constants", calculator.fixedParameters());
         return "calculations/list";
     }
 }
