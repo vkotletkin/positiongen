@@ -46,6 +46,17 @@ public class ObjectStorageService {
         }
     }
 
+    public void delete(final String key) {
+        try {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(storageConfig.bucket())
+                    .key(key)
+                    .build());
+        } catch (SdkException ex) {
+            throw new StorageException("Failed to delete object", ex);
+        }
+    }
+
     public InputStream open(final String key) {
         try {
             return s3Client.getObject(GetObjectRequest.builder()

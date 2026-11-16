@@ -107,7 +107,14 @@
                         </div>
                     </td>
                     <td th:text="${item.reportCount != null ? item.reportCount : '—'}"></td>
-                    <td><a th:href="@{|/calculations/${item.id}/map|}">Map</a></td>
+                    <td class="actions">
+                        <a th:href="@{|/calculations/${item.id}/map|}">Map</a>
+                        <form class="inline" method="post" th:action="@{|/calculations/${item.id}/delete|}"
+                              onsubmit="return confirm('Delete this calculation?');">
+                            <input type="hidden" name="page" th:value="${calculationPage.number}">
+                            <button type="submit" class="danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>

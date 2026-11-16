@@ -113,6 +113,25 @@ button, .button {
     border: 1px solid var(--line);
 }
 
+button.danger {
+    background: transparent;
+    color: var(--bad);
+    border: 1px solid #e3c8c4;
+    padding: 6px 12px;
+}
+
+form.inline {
+    display: inline-flex;
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
 .error {
     margin: 0;
     color: var(--bad);
@@ -215,6 +234,10 @@ tr[data-status="FAILED"] .status, #status-panel[data-status="FAILED"] {
 .side h1 {
     margin: 0 0 8px;
     font-size: 1.8rem;
+}
+
+.side form {
+    margin-top: 16px;
 }
 
 .meta {

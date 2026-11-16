@@ -18,6 +18,7 @@ import ru.kotletkin.positiongen.calculation.repository.CalculationRequestReposit
 import ru.kotletkin.positiongen.result.CalculationResult;
 import ru.kotletkin.positiongen.result.StoredArtifacts;
 import ru.kotletkin.positiongen.simulation.SimulationRequest;
+import ru.kotletkin.positiongen.storage.ObjectStorageService;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class CalculationService {
 
     private final CalculationRequestRepository requests;
     private final CalculationMapper mapper;
+    private final ObjectStorageService objectStorage;
 
     @Transactional
     public UUID submit(final CalculationRequestDTO request) {
@@ -56,8 +58,15 @@ public class CalculationService {
         return entity.getId();
     }
 
+    @Transactional
     public void deleteCalculationByUUID(final UUID uuid) {
-        requests.deleteById(uuid);
+        CalculationRequest request = loadCalculationByUuid(uuid);
+        CalculationResult result = request.getResult();
+        if (result != null) {
+            objectStorage.delete(result.getXyObjectKey());
+            objectStorage.delete(result.getPlacesObjectKey());
+        }
+        requests.delete(request);
     }
 
     public CalculationDTO getCalculationByUuid(final UUID id) {

@@ -41,5 +41,9 @@ app:
     origin-latitude: 59.9343
     origin-longitude: 30.3351
     max-points: 12000
+    # Public tiles by default. For an air-gapped network set APP_MAP_TILE_URL
+    # to an internal tile server, or leave it empty to draw tracks without a basemap.
+    tile-url: "${APP_MAP_TILE_URL:https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png}"
+    tile-attribution: "${APP_MAP_TILE_ATTRIBUTION:© OpenStreetMap}"
   calculation:
     pool-size: 2

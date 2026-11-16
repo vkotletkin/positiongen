@@ -11,10 +11,14 @@ const companionIds = new Set(
 );
 
 const map = L.map(root, {scrollWheelZoom: true});
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap"
-}).addTo(map);
+const tileUrl = (root.dataset.tileUrl || "").trim();
+if (tileUrl) {
+    L.tileLayer(tileUrl, {
+        maxZoom: 19,
+        attribution: root.dataset.tileAttribution || "",
+        errorTileUrl: "/tiles/blank.png"
+    }).addTo(map);
+}
 map.setView([Number(root.dataset.originLat), Number(root.dataset.originLon)], 8);
 
 const layers = L.layerGroup().addTo(map);

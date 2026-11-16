@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record MapProperties(
         double originLatitude,
         double originLongitude,
-        int maxPoints
+        int maxPoints,
+        String tileUrl,
+        String tileAttribution
 ) {
 }

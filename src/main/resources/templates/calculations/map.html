@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${calculation.label != null ? calculation.label : 'Map'} + ' — Positiongen'">Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/vendor/leaflet/leaflet.css}">
     <link rel="stylesheet" th:href="@{/app.css}">
 </head>
 <body>
@@ -39,16 +37,21 @@
         <p class="hint">Companions are a random group that shares one route. A finished calculation lists their ids.</p>
         <p class="hint">Model coordinates are kilometers along the first two axes. On the map they are offset from the
             origin so the lines have a place to sit.</p>
+        <p class="hint" th:if="${tileUrl == null or #strings.isEmpty(tileUrl)}">Basemap is off. Tracks are drawn on a plain background.</p>
+        <form method="post" th:action="@{|/calculations/${calculation.id}/delete|}"
+              onsubmit="return confirm('Delete this calculation?');">
+            <button type="submit" class="danger">Delete calculation</button>
+        </form>
     </aside>
     <div id="map"
          th:data-id="${calculation.id}"
          th:data-origin-lat="${originLatitude}"
          th:data-origin-lon="${originLongitude}"
+         th:data-tile-url="${tileUrl}"
+         th:data-tile-attribution="${tileAttribution}"
          th:data-companions="${calculation.coTravelerIds != null ? #strings.listJoin(calculation.coTravelerIds, ',') : ''}"></div>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin="anonymous"></script>
+<script th:src="@{/vendor/leaflet/leaflet.js}"></script>
 <script th:src="@{/map.js}" type="module"></script>
 </body>
 </html>

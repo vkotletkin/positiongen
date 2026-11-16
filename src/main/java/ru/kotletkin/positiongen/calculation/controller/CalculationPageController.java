@@ -46,12 +46,20 @@ public class CalculationPageController {
         return "redirect:/calculations/%s/map".formatted(id);
     }
 
+    @PostMapping("/calculations/{id}/delete")
+    public String delete(@PathVariable final UUID id, @RequestParam(name = "page", defaultValue = "0") final int page) {
+        calculations.deleteCalculationByUUID(id);
+        return "redirect:/?page=%d".formatted(Math.max(page, 0));
+    }
+
     @GetMapping("/calculations/{id}/map")
     public String map(@PathVariable final UUID id, final Model model) {
         model.addAttribute("calculation", calculations.getCalculationByUuid(id));
         model.addAttribute("originLatitude", mapProperties.originLatitude());
         model.addAttribute("originLongitude", mapProperties.originLongitude());
         model.addAttribute("maxPoints", mapProperties.maxPoints());
+        model.addAttribute("tileUrl", mapProperties.tileUrl());
+        model.addAttribute("tileAttribution", mapProperties.tileAttribution());
         model.addAttribute("constants", calculator.fixedParameters());
         return "calculations/map";
     }

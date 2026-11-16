@@ -59,6 +59,85 @@ public class FractalRabbitCalculator {
 
     private final Random random = new Random();
 
+    private static TravelerAssignment assignTravelers(int numCoTravelers, int numTravelers) {
+        Integer[] travelerIds = new Integer[numTravelers];
+        Arrays.setAll(travelerIds, id -> id);
+        List<Integer> shuffled = Arrays.asList(travelerIds);
+        Collections.shuffle(shuffled);
+        Map<Integer, Integer> trajectoryAssignment = new HashMap<>();
+        List<Integer> coTravelerIds = new ArrayList<>();
+        for (int index = 0; index < numCoTravelers; index++) {
+            int travelerId = shuffled.get(index);
+            trajectoryAssignment.put(travelerId, 0);
+            coTravelerIds.add(travelerId);
+        }
+        for (int index = numCoTravelers; index < numTravelers; index++) {
+            trajectoryAssignment.put(shuffled.get(index), index - numCoTravelers + 1);
+        }
+        coTravelerIds.sort(Integer::compareTo);
+        return new TravelerAssignment(trajectoryAssignment, List.copyOf(coTravelerIds));
+    }
+
+    private static int writeCoordinateCsv(AgoraphobicPoints points,
+                                          Map<Integer, List<Double>> reportTimes,
+                                          Map<Integer, List<Integer>> reportPlaces,
+                                          Path output) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(output);
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("ID", "Days", "x(km)", "y(km)");
+            int lines = 0;
+            for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
+                Integer traveler = report.getKey();
+                List<Double> times = report.getValue();
+                List<Integer> places = reportPlaces.get(traveler);
+                for (int index = 0; index < times.size(); index++) {
+                    int place = places.get(index);
+                    double x = KILOMETERS_PER_UNIT * points.getPoints().get(place)[0];
+                    double y = KILOMETERS_PER_UNIT * points.getPoints().get(place)[1];
+                    csvPrinter.printRecord(traveler, times.get(index), x, y);
+                    lines++;
+                }
+            }
+            csvPrinter.flush();
+            return lines;
+        }
+    }
+
+    private static int writePlacesCsv(Map<Integer, List<Double>> reportTimes,
+                                      Map<Integer, List<Integer>> reportPlaces,
+                                      Path output) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(output);
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("Traveler ID", "Days", "Place ID");
+            int lines = 0;
+            for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
+                Integer traveler = report.getKey();
+                List<Double> times = report.getValue();
+                List<Integer> places = reportPlaces.get(traveler);
+                for (int index = 0; index < times.size(); index++) {
+                    csvPrinter.printRecord(traveler, times.get(index), places.get(index));
+                    lines++;
+                }
+            }
+            csvPrinter.flush();
+            return lines;
+        }
+    }
+
+    private static void deleteQuietly(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException _) {
+            // The calling failure is the one that should surface.
+        }
+    }
+
+    private static Path createPrivateTempDirectory() throws IOException {
+        return Files.createTempDirectory(
+                "positiongen-fractalrabbit-",
+                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
+    }
+
     public FixedParameters fixedParameters() {
         return new FixedParameters(
                 RESTART_RATE,
@@ -131,86 +210,7 @@ public class FractalRabbitCalculator {
         }
     }
 
-    private static TravelerAssignment assignTravelers(int numCoTravelers, int numTravelers) {
-        Integer[] travelerIds = new Integer[numTravelers];
-        Arrays.setAll(travelerIds, id -> id);
-        List<Integer> shuffled = Arrays.asList(travelerIds);
-        Collections.shuffle(shuffled);
-        Map<Integer, Integer> trajectoryAssignment = new HashMap<>();
-        List<Integer> coTravelerIds = new ArrayList<>();
-        for (int index = 0; index < numCoTravelers; index++) {
-            int travelerId = shuffled.get(index);
-            trajectoryAssignment.put(travelerId, 0);
-            coTravelerIds.add(travelerId);
-        }
-        for (int index = numCoTravelers; index < numTravelers; index++) {
-            trajectoryAssignment.put(shuffled.get(index), index - numCoTravelers + 1);
-        }
-        coTravelerIds.sort(Integer::compareTo);
-        return new TravelerAssignment(trajectoryAssignment, List.copyOf(coTravelerIds));
-    }
-
     private record TravelerAssignment(Map<Integer, Integer> trajectories, List<Integer> coTravelerIds) {
-    }
-
-    private static int writeCoordinateCsv(AgoraphobicPoints points,
-                                          Map<Integer, List<Double>> reportTimes,
-                                          Map<Integer, List<Integer>> reportPlaces,
-                                          Path output) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(output);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-            csvPrinter.printRecord("ID", "Days", "x(km)", "y(km)");
-            int lines = 0;
-            for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
-                Integer traveler = report.getKey();
-                List<Double> times = report.getValue();
-                List<Integer> places = reportPlaces.get(traveler);
-                for (int index = 0; index < times.size(); index++) {
-                    int place = places.get(index);
-                    double x = KILOMETERS_PER_UNIT * points.getPoints().get(place)[0];
-                    double y = KILOMETERS_PER_UNIT * points.getPoints().get(place)[1];
-                    csvPrinter.printRecord(traveler, times.get(index), x, y);
-                    lines++;
-                }
-            }
-            csvPrinter.flush();
-            return lines;
-        }
-    }
-
-    private static int writePlacesCsv(Map<Integer, List<Double>> reportTimes,
-                                      Map<Integer, List<Integer>> reportPlaces,
-                                      Path output) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(output);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-            csvPrinter.printRecord("Traveler ID", "Days", "Place ID");
-            int lines = 0;
-            for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
-                Integer traveler = report.getKey();
-                List<Double> times = report.getValue();
-                List<Integer> places = reportPlaces.get(traveler);
-                for (int index = 0; index < times.size(); index++) {
-                    csvPrinter.printRecord(traveler, times.get(index), places.get(index));
-                    lines++;
-                }
-            }
-            csvPrinter.flush();
-            return lines;
-        }
-    }
-
-    private static void deleteQuietly(Path path) {
-        try {
-            Files.deleteIfExists(path);
-        } catch (IOException _) {
-            // The calling failure is the one that should surface.
-        }
-    }
-
-    private static Path createPrivateTempDirectory() throws IOException {
-        return Files.createTempDirectory(
-                "positiongen-fractalrabbit-",
-                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
     }
 
     public record FixedParameters(
