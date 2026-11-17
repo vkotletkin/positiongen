@@ -36,6 +36,12 @@ public class CalculationRequest {
     @Column(nullable = false)
     private int pointCount;
 
+    private Boolean suppliedPlaces;
+
+    public boolean isSuppliedPlaces() {
+        return Boolean.TRUE.equals(suppliedPlaces);
+    }
+
     @Column(nullable = false)
     private int travelerCount;
 

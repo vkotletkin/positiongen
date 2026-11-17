@@ -18,7 +18,8 @@
         <p id="notice" class="notice" th:text="${calculation.errorMessage}"
            th:hidden="${calculation.errorMessage == null}"></p>
         <ul class="meta">
-            <li th:text="|Dimension ${calculation.dimension}, fractal ${calculation.fractalDimension}|"></li>
+            <li th:if="${calculation.suppliedPlaces}">Uploaded places</li>
+            <li th:unless="${calculation.suppliedPlaces}" th:text="|Dimension ${calculation.dimension}, fractal ${calculation.fractalDimension}|"></li>
             <li th:text="|Places ${calculation.pointCount}|"></li>
             <li th:text="|Travelers ${calculation.travelerCount}, companions on one route ${calculation.coTravelerCount}|"></li>
             <li id="companions" th:if="${calculation.coTravelerIds != null and !#lists.isEmpty(calculation.coTravelerIds)}">
@@ -27,7 +28,8 @@
                       th:text="${stat.last} ? ${companionId} : ${companionId} + ', '"></span>
             </li>
             <li th:text="|Window ${calculation.days} days, mean ${calculation.meanReportCount} reports|"></li>
-            <li th:text="|New-cluster rate ${calculation.restartRate}, distance exponent ${calculation.distanceExponent}|"></li>
+            <li th:unless="${calculation.suppliedPlaces}" th:text="|New-cluster rate ${calculation.restartRate}|"></li>
+            <li th:text="|Distance exponent ${calculation.distanceExponent}|"></li>
             <li th:text="|Speed ${calculation.maxKilometersPerHour} km/h, ${calculation.kilometersPerUnit} km per model unit|"></li>
             <li th:text="|Mean route ${calculation.stepsMean} steps, exploration ${calculation.phiMean}|"></li>
             <li th:text="|Pareto lower bound ${calculation.reportDelta}, tail ${calculation.reportAlpha}|"></li>

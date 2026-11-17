@@ -20,11 +20,17 @@
             <h2>New request</h2>
             <p class="hint">The defaults are small so the map opens quickly. The parameters.csv example — 5,000 places,
                 3,000 travelers, 200 reports — is already a long calculation.</p>
-            <form th:object="${form}" method="post" th:action="@{/calculations}">
+            <form th:object="${form}" method="post" th:action="@{/calculations}" enctype="multipart/form-data">
                 <label>Label
                     <input type="text" th:field="*{label}" maxlength="200" placeholder="Optional">
                 </label>
                 <p class="error" th:if="${#fields.hasErrors('label')}" th:errors="*{label}"></p>
+
+                <label>Places file
+                    <input type="file" name="placesFile" accept=".csv,text/csv">
+                </label>
+                <p class="hint">Optional. Your places replace the generated set. Routes, travel time, and reports are still generated. CSV columns are <code>latitude,longitude</code>: latitude is y, longitude is x. Two numeric columns and no header use that same order. Space dimension, fractal dimension, number of places, and new-cluster rate apply only when this file is empty.</p>
+                <p class="error" th:if="${#fields.hasErrors('places')}" th:errors="*{places}"></p>
 
                 <label>Space dimension
                     <input type="number" th:field="*{dimension}" min="2" max="16" required>
@@ -132,7 +138,8 @@
                     </td>
                     <td><span class="status" th:text="${item.statusTitle}"></span></td>
                     <td class="hint">
-                        <div th:text="|${item.dimension}D, h=${item.fractalDimension}, places ${item.pointCount}, travelers ${item.travelerCount}, ${item.days} days|"></div>
+                        <div th:if="${item.suppliedPlaces}" th:text="|Uploaded places ${item.pointCount}, travelers ${item.travelerCount}, ${item.days} days|"></div>
+                        <div th:unless="${item.suppliedPlaces}" th:text="|${item.dimension}D, h=${item.fractalDimension}, places ${item.pointCount}, travelers ${item.travelerCount}, ${item.days} days|"></div>
                         <div th:if="${item.coTravelerIds != null and !#lists.isEmpty(item.coTravelerIds)}">
                             Companions:
                             <span th:each="companionId, stat : ${item.coTravelerIds}"
@@ -169,11 +176,13 @@
         <p class="hint">Each request runs FRACTALRABBIT with the values in the form. The generator itself is unchanged.</p>
         <dl>
             <dt>Space dimension</dt>
-            <dd>Dimension of the place coordinates. The map draws only the first two axes. It must be greater than the fractal dimension.</dd>
+            <dd>Dimension of the generated place coordinates. The map draws only the first two axes. It must be greater than the fractal dimension. Uploaded places are always two-dimensional.</dd>
             <dt>Fractal dimension</dt>
             <dd>How tightly places clump. A smaller value packs them into tighter groups. A value closer to the space dimension spreads them more evenly.</dd>
+            <dt>Places file</dt>
+            <dd>Optional CSV of your own places. The route generator then walks these places instead of building a fractal set. Columns are latitude, then longitude. Latitude is y, the north-south axis. Longitude is x, the east-west axis.</dd>
             <dt>Number of places</dt>
-            <dd>How many locations are generated. More places make the routes denser and the calculation slower.</dd>
+            <dd>How many locations are generated when no places file is uploaded. More places make the routes denser and the calculation slower. An uploaded file sets this count itself.</dd>
             <dt>Travelers</dt>
             <dd>How many people are simulated. Companions share one route; everyone else gets a route of their own.</dd>
             <dt>Companions on one route</dt>
@@ -183,7 +192,7 @@
             <dt>Mean report count</dt>
             <dd>Average number of reports per traveler. Each traveler draws a Poisson count around this integer, so the actual number varies.</dd>
             <dt>New-cluster rate</dt>
-            <dd>While places are built, the rate at which the next place starts a new clump at the origin instead of attaching near an existing place. Higher values make more separate clusters. Zero keeps growing the clusters already formed.</dd>
+            <dd>While places are built, the rate at which the next place starts a new clump at the origin instead of attaching near an existing place. Higher values make more separate clusters. Zero keeps growing the clusters already formed. Ignored when a places file is uploaded.</dd>
             <dt>Distance exponent</dt>
             <dd>How strongly a step prefers nearby places. The rate toward another place is its distance raised to this power. A more negative value, such as −4 instead of −2, makes long jumps rare. A positive value prefers distant places.</dd>
             <dt>Speed limit</dt>

@@ -2,7 +2,10 @@ package ru.kotletkin.positiongen.calculation.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import ru.kotletkin.positiongen.calculation.places.PlacePoint;
 import ru.kotletkin.positiongen.calculation.validation.ConsistentCalculation;
+
+import java.util.List;
 
 @Data
 @ConsistentCalculation
@@ -69,4 +72,10 @@ public class CalculationRequestDTO {
     @DecimalMin(value = "-20.0", message = "Pareto tail must be at least -20")
     @DecimalMax(value = "-1.0", inclusive = false, message = "Pareto tail must be less than -1")
     private double reportAlpha = -1.5;
+
+    /**
+     * Optional place set. When present, these places replace the generated ones.
+     * The form uploads a CSV instead of binding this field.
+     */
+    private List<PlacePoint> places;
 }

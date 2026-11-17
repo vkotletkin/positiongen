@@ -16,8 +16,10 @@ public interface CalculationMapper {
     @Mapping(target = "xyByteSize", source = "result.xyByteSize")
     @Mapping(target = "placesByteSize", source = "result.placesByteSize")
     @Mapping(target = "coTravelerIds", source = "result.coTravelerIds")
+    @Mapping(target = "suppliedPlaces", expression = "java(request.isSuppliedPlaces())")
     CalculationDTO toDto(CalculationRequest request);
 
+    @Mapping(target = "places", ignore = true)
     SimulationRequest toSimulationRequest(CalculationRequest request);
 
     @Named("statusTitle")

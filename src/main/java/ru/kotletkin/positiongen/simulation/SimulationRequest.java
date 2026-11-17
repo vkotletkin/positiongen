@@ -15,6 +15,27 @@ public record SimulationRequest(
         double phiMean,
         double stepsMean,
         double reportDelta,
-        double reportAlpha
+        double reportAlpha,
+        double[][] places
 ) {
+
+    public SimulationRequest withPlaces(final double[][] places) {
+        return new SimulationRequest(
+                dimension,
+                fractalDimension,
+                places == null ? pointCount : places.length,
+                travelerCount,
+                coTravelerCount,
+                days,
+                meanReportCount,
+                restartRate,
+                distanceExponent,
+                maxKilometersPerHour,
+                kilometersPerUnit,
+                phiMean,
+                stepsMean,
+                reportDelta,
+                reportAlpha,
+                places);
+    }
 }

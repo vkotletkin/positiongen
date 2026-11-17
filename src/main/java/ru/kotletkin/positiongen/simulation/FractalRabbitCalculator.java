@@ -19,7 +19,8 @@ import java.util.*;
 /**
  * Runs the FRACTALRABBIT generators in the same order as
  * {@link fractalrabbit.MainClassCyberBadger}. Model parameters come from the
- * request. The generator classes themselves are not modified.
+ * request. Uploaded places replace the generated set; routes and reports
+ * still come from the generators. The generator classes themselves are not modified.
  */
 @Component
 public class FractalRabbitCalculator {
@@ -45,7 +46,7 @@ public class FractalRabbitCalculator {
         return new TravelerAssignment(trajectoryAssignment, List.copyOf(coTravelerIds));
     }
 
-    private static int writeCoordinateCsv(AgoraphobicPoints points,
+    private static int writeCoordinateCsv(List<double[]> points,
                                           Map<Integer, List<Double>> reportTimes,
                                           Map<Integer, List<Integer>> reportPlaces,
                                           double kilometersPerUnit,
@@ -60,8 +61,8 @@ public class FractalRabbitCalculator {
                 List<Integer> places = reportPlaces.get(traveler);
                 for (int index = 0; index < times.size(); index++) {
                     int place = places.get(index);
-                    double x = kilometersPerUnit * points.getPoints().get(place)[0];
-                    double y = kilometersPerUnit * points.getPoints().get(place)[1];
+                    double x = kilometersPerUnit * points.get(place)[0];
+                    double y = kilometersPerUnit * points.get(place)[1];
                     csvPrinter.printRecord(traveler, times.get(index), x, y);
                     lines++;
                 }
@@ -107,14 +108,9 @@ public class FractalRabbitCalculator {
     }
 
     public SimulationOutput run(SimulationRequest request) throws IOException {
-        AgoraphobicPoints points = new AgoraphobicPoints(
-                request.pointCount(),
-                request.dimension(),
-                request.fractalDimension(),
-                request.restartRate());
-        points.generatePoints();
-        EuclideanPoint[] metricPoints = new EuclideanPoint[points.getPoints().size()];
-        Arrays.setAll(metricPoints, index -> new EuclideanPoint(points.getPoints().get(index)));
+        List<double[]> points = places(request);
+        EuclideanPoint[] metricPoints = new EuclideanPoint[points.size()];
+        Arrays.setAll(metricPoints, index -> new EuclideanPoint(points.get(index)));
         Retropreferential retropreferential = new Retropreferential(metricPoints, request.distanceExponent());
         SporadicReporter reporter = new SporadicReporter(
                 metricPoints,
@@ -132,7 +128,7 @@ public class FractalRabbitCalculator {
             trajectories.add(retropreferential.trajectory(
                     phiRandom.generate(),
                     stepsRandom.generate(),
-                    random.nextInt(request.pointCount())));
+                    random.nextInt(points.size())));
         }
 
         PoissonVariate countRandom = new PoissonVariate(request.meanReportCount());
@@ -167,6 +163,19 @@ public class FractalRabbitCalculator {
             deleteQuietly(directory);
             throw ex;
         }
+    }
+
+    private static List<double[]> places(final SimulationRequest request) {
+        if (request.places() != null) {
+            return Arrays.asList(request.places());
+        }
+        AgoraphobicPoints generated = new AgoraphobicPoints(
+                request.pointCount(),
+                request.dimension(),
+                request.fractalDimension(),
+                request.restartRate());
+        generated.generatePoints();
+        return generated.getPoints();
     }
 
     private record TravelerAssignment(Map<Integer, Integer> trajectories, List<Integer> coTravelerIds) {

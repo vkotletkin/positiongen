@@ -20,6 +20,10 @@ spring:
         max-page-size: 100
   thymeleaf:
     cache: ${SPRING_THYMELEAF_CACHE:false}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
   cloud:
     aws:
       credentials:

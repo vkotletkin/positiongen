@@ -94,6 +94,20 @@ public final class TrackGeoJson {
         return new double[]{longitude, latitude};
     }
 
+    /**
+     * Inverse of {@link #project}. East is positive x, north is positive y.
+     */
+    public static double[] kilometersFromGeographic(double latitude,
+                                                    double longitude,
+                                                    double originLatitude,
+                                                    double originLongitude) {
+        double yKm = (latitude - originLatitude) * KILOMETERS_PER_LATITUDE_DEGREE;
+        double xKm = (longitude - originLongitude)
+                * KILOMETERS_PER_LONGITUDE_DEGREE
+                * Math.cos(Math.toRadians(originLatitude));
+        return new double[]{xKm, yKm};
+    }
+
     private record Report(int travelerId, double days, double xKm, double yKm) {
     }
 }

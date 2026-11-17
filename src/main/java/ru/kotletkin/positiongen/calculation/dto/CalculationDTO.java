@@ -14,6 +14,7 @@ public record CalculationDTO(
         int dimension,
         double fractalDimension,
         int pointCount,
+        boolean suppliedPlaces,
         int travelerCount,
         int coTravelerCount,
         int days,

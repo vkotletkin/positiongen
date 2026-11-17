@@ -3,8 +3,16 @@ package ru.kotletkin.positiongen.calculation.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ru.kotletkin.positiongen.calculation.dto.CalculationRequestDTO;
+import ru.kotletkin.positiongen.calculation.places.PlaceCoordinates;
+import ru.kotletkin.positiongen.config.MapProperties;
 
 public class ConsistentCalculationValidator implements ConstraintValidator<ConsistentCalculation, CalculationRequestDTO> {
+
+    private final MapProperties mapProperties;
+
+    public ConsistentCalculationValidator(final MapProperties mapProperties) {
+        this.mapProperties = mapProperties;
+    }
 
     @Override
     public boolean isValid(final CalculationRequestDTO form, final ConstraintValidatorContext context) {
@@ -12,8 +20,9 @@ public class ConsistentCalculationValidator implements ConstraintValidator<Consi
             return true;
         }
         boolean valid = true;
+        boolean uploaded = form.getPlaces() != null && !form.getPlaces().isEmpty();
         context.disableDefaultConstraintViolation();
-        if (form.getFractalDimension() >= form.getDimension()) {
+        if (!uploaded && form.getFractalDimension() >= form.getDimension()) {
             context.buildConstraintViolationWithTemplate(
                             "Fractal dimension must be less than the space dimension")
                     .addPropertyNode("fractalDimension")
@@ -26,6 +35,20 @@ public class ConsistentCalculationValidator implements ConstraintValidator<Consi
                     .addPropertyNode("coTravelerCount")
                     .addConstraintViolation();
             valid = false;
+        }
+        if (uploaded) {
+            try {
+                PlaceCoordinates.toModelUnits(
+                        form.getPlaces(),
+                        mapProperties.originLatitude(),
+                        mapProperties.originLongitude(),
+                        form.getKilometersPerUnit());
+            } catch (IllegalArgumentException ex) {
+                context.buildConstraintViolationWithTemplate(ex.getMessage())
+                        .addPropertyNode("places")
+                        .addConstraintViolation();
+                valid = false;
+            }
         }
         return valid;
     }
