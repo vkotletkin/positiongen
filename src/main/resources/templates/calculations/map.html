@@ -39,8 +39,9 @@
             <a class="button secondary" th:href="@{|/api/calculations/${calculation.id}/files/xy|}">XY.csv</a>
             <a class="button secondary" th:href="@{|/api/calculations/${calculation.id}/files/places|}">PLACES.csv</a>
         </div>
+        <button type="button" id="companion-tracks" class="companion-tracks" hidden aria-pressed="false">Companion tracks</button>
         <div id="legend"></div>
-        <p class="hint">Companions are a random group that shares one route. A finished calculation lists their ids.</p>
+        <p class="hint">Companion tracks keeps every companion and dims the other routes. Click a point to open each companion's times at that place.</p>
         <p class="hint">Model coordinates are kilometers along the first two axes. On the map they are offset from the
             origin so the lines have a place to sit.</p>
         <p class="hint" th:if="${tileUrl == null or #strings.isEmpty(tileUrl)}">Basemap is off. Tracks are drawn on a plain background.</p>
@@ -58,6 +59,6 @@
          th:data-companions="${calculation.coTravelerIds != null ? #strings.listJoin(calculation.coTravelerIds, ',') : ''}"></div>
 </div>
 <script th:src="@{/vendor/leaflet/leaflet.js}"></script>
-<script th:src="@{/map.js}" type="module"></script>
+<script th:src="@{/map.js(v='place-popup')}" type="module"></script>
 </body>
 </html>
