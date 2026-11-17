@@ -33,6 +33,12 @@ public class CalculationRequestDTO {
     @Max(value = 5000, message = "At most 5,000 co-travelers")
     private int coTravelerCount = 1;
 
+    private boolean travelTogether = false;
+
+    @Min(value = 0, message = "Together window cannot be negative")
+    @Max(value = 720, message = "Together window must be at most 720 minutes")
+    private int togetherMinutes = 15;
+
     @Min(value = 1, message = "Observation window must be at least 1 day")
     @Max(value = 3650, message = "Observation window must be at most 3650 days")
     private int days = 14;

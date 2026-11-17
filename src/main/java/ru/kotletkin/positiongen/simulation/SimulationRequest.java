@@ -16,6 +16,8 @@ public record SimulationRequest(
         double stepsMean,
         double reportDelta,
         double reportAlpha,
+        boolean travelTogether,
+        int togetherMinutes,
         double[][] places
 ) {
 
@@ -36,6 +38,8 @@ public record SimulationRequest(
                 stepsMean,
                 reportDelta,
                 reportAlpha,
+                travelTogether,
+                togetherMinutes,
                 places);
     }
 }

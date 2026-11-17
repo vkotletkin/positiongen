@@ -48,6 +48,18 @@ public class CalculationRequest {
     @Column(nullable = false)
     private int coTravelerCount;
 
+    private Boolean travelTogether;
+
+    private Integer togetherMinutes;
+
+    public boolean isTravelTogether() {
+        return Boolean.TRUE.equals(travelTogether);
+    }
+
+    public int resolvedTogetherMinutes() {
+        return togetherMinutes == null ? 15 : togetherMinutes;
+    }
+
     @Column(nullable = false)
     private int days;
 

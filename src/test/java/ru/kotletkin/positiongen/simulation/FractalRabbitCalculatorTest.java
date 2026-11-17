@@ -9,6 +9,10 @@ import ru.kotletkin.positiongen.map.TrackGeoJson;
 
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +24,7 @@ class FractalRabbitCalculatorTest {
     void writesBothResultFilesAndAMapTrack() throws Exception {
         FractalRabbitCalculator calculator = new FractalRabbitCalculator();
         SimulationRequest request = new SimulationRequest(
-                2, 1.33, 40, 3, 1, 14, 8, 0.75, -2.0, 100.0, 20.0, 10.0, 100.0, 0.001, -1.5, null);
+                2, 1.33, 40, 3, 1, 14, 8, 0.75, -2.0, 100.0, 20.0, 10.0, 100.0, 0.001, -1.5, false, 15, null);
 
         try (SimulationOutput output = calculator.run(request)) {
             assertTrue(output.reportCount() > 0, "expected reports within a 14-day window");
@@ -48,7 +52,7 @@ class FractalRabbitCalculatorTest {
                 {1, 1}
         };
         SimulationRequest request = new SimulationRequest(
-                2, 5, 9_999, 2, 0, 14, 6, 0.75, -2.0, 100.0, kilometersPerUnit, 4.0, 30.0, 0.001, -1.5, places);
+                2, 5, 9_999, 2, 0, 14, 6, 0.75, -2.0, 100.0, kilometersPerUnit, 4.0, 30.0, 0.001, -1.5, false, 15, places);
 
         try (SimulationOutput output = new FractalRabbitCalculator().run(request)) {
             assertTrue(output.reportCount() > 0);
@@ -75,6 +79,31 @@ class FractalRabbitCalculatorTest {
     }
 
     @Test
+    void companionsVisitTheSamePlacesWithinTheTimeWindow() throws Exception {
+        double[][] places = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
+        SimulationRequest request = new SimulationRequest(
+                2, 1.33, 4, 2, 2, 14, 12, 0.75, -2.0, 100.0, 20.0, 4.0, 20.0, 0.001, -1.5, true, 15, places);
+        double windowDays = 15.0 / 1440.0;
+
+        try (SimulationOutput output = new FractalRabbitCalculator().run(request)) {
+            assertTrue(output.reportCount() > 0);
+            Map<Integer, List<CSVRecord>> byTraveler = reportsByTraveler(output.placesCsv());
+            List<Integer> companions = output.coTravelerIds();
+            assertEquals(2, companions.size());
+            List<CSVRecord> first = byTraveler.get(companions.get(0));
+            List<CSVRecord> second = byTraveler.get(companions.get(1));
+            assertEquals(first.size(), second.size());
+            assertFalse(first.isEmpty());
+            for (int index = 0; index < first.size(); index++) {
+                assertEquals(first.get(index).get("Place ID"), second.get(index).get("Place ID"));
+                double left = Double.parseDouble(first.get(index).get("Days"));
+                double right = Double.parseDouble(second.get(index).get("Days"));
+                assertTrue(Math.abs(left - right) <= windowDays + 1e-9, left + " vs " + right);
+            }
+        }
+    }
+
+    @Test
     void projectionKeepsTheAnchorAndMovesNorth() {
         double[] origin = TrackGeoJson.project(0, 0, 44.605, 33.522);
         assertEquals(33.522, origin[0], 1e-9);
@@ -94,6 +123,17 @@ class FractalRabbitCalculatorTest {
             }
         }
         return false;
+    }
+
+    private static Map<Integer, List<CSVRecord>> reportsByTraveler(java.nio.file.Path csv) throws Exception {
+        Map<Integer, List<CSVRecord>> grouped = new LinkedHashMap<>();
+        try (CSVParser parser = CSVParser.parse(csv, java.nio.charset.StandardCharsets.UTF_8,
+                CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).get())) {
+            for (CSVRecord row : parser) {
+                grouped.computeIfAbsent(Integer.parseInt(row.get("Traveler ID")), _ -> new ArrayList<>()).add(row);
+            }
+        }
+        return grouped;
     }
 
     private static int dataRows(java.nio.file.Path csv) throws Exception {

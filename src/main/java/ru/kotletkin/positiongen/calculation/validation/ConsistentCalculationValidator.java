@@ -29,6 +29,13 @@ public class ConsistentCalculationValidator implements ConstraintValidator<Consi
                     .addConstraintViolation();
             valid = false;
         }
+        if (form.isTravelTogether() && form.getCoTravelerCount() < 2) {
+            context.buildConstraintViolationWithTemplate(
+                            "Traveling together needs at least two companions")
+                    .addPropertyNode("travelTogether")
+                    .addConstraintViolation();
+            valid = false;
+        }
         if (form.getCoTravelerCount() > form.getTravelerCount()) {
             context.buildConstraintViolationWithTemplate(
                             "Co-traveler count cannot exceed traveler count")

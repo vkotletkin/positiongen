@@ -17,9 +17,13 @@ public interface CalculationMapper {
     @Mapping(target = "placesByteSize", source = "result.placesByteSize")
     @Mapping(target = "coTravelerIds", source = "result.coTravelerIds")
     @Mapping(target = "suppliedPlaces", expression = "java(request.isSuppliedPlaces())")
+    @Mapping(target = "travelTogether", expression = "java(request.isTravelTogether())")
+    @Mapping(target = "togetherMinutes", expression = "java(request.resolvedTogetherMinutes())")
     CalculationDTO toDto(CalculationRequest request);
 
     @Mapping(target = "places", ignore = true)
+    @Mapping(target = "travelTogether", expression = "java(request.isTravelTogether())")
+    @Mapping(target = "togetherMinutes", expression = "java(request.resolvedTogetherMinutes())")
     SimulationRequest toSimulationRequest(CalculationRequest request);
 
     @Named("statusTitle")

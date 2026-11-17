@@ -55,8 +55,21 @@
                 <label>Companions on one route
                     <input type="number" th:field="*{coTravelerCount}" min="0" max="5000" step="1" required>
                 </label>
-                <p class="hint">A random group of this size shares one route. The finished calculation lists their ids.</p>
+                <p class="hint">A random group of this size shares one route. The finished calculation lists their ids. Without the checkbox, each companion gets their own report times.</p>
                 <p class="error" th:if="${#fields.hasErrors('coTravelerCount')}" th:errors="*{coTravelerCount}"></p>
+
+                <label class="check">
+                    <input type="checkbox" th:field="*{travelTogether}" id="travelTogether">
+                    <span>Companions travel together</span>
+                </label>
+                <p class="error" th:if="${#fields.hasErrors('travelTogether')}" th:errors="*{travelTogether}"></p>
+                <div id="together-fields" th:hidden="*{!travelTogether}">
+                    <label>Time window, minutes
+                        <input type="number" th:field="*{togetherMinutes}" min="0" max="720" step="1" required>
+                    </label>
+                    <p class="hint">At a shared place, companions stay within this many minutes of each other. 15 minutes is the default.</p>
+                    <p class="error" th:if="${#fields.hasErrors('togetherMinutes')}" th:errors="*{togetherMinutes}"></p>
+                </div>
 
                 <label>Observation window, days
                     <input type="number" th:field="*{days}" min="1" max="3650" step="1" required>
@@ -140,6 +153,7 @@
                     <td class="hint">
                         <div th:if="${item.suppliedPlaces}" th:text="|Uploaded places ${item.pointCount}, travelers ${item.travelerCount}, ${item.days} days|"></div>
                         <div th:unless="${item.suppliedPlaces}" th:text="|${item.dimension}D, h=${item.fractalDimension}, places ${item.pointCount}, travelers ${item.travelerCount}, ${item.days} days|"></div>
+                        <div th:if="${item.travelTogether}" th:text="|Together within ${item.togetherMinutes} min|"></div>
                         <div th:if="${item.coTravelerIds != null and !#lists.isEmpty(item.coTravelerIds)}">
                             Companions:
                             <span th:each="companionId, stat : ${item.coTravelerIds}"
@@ -186,7 +200,9 @@
             <dt>Travelers</dt>
             <dd>How many people are simulated. Companions share one route; everyone else gets a route of their own.</dd>
             <dt>Companions on one route</dt>
-            <dd>A random group of this size follows the same sequence of places. The finished calculation lists their ids. The count cannot exceed the number of travelers.</dd>
+            <dd>A random group of this size follows the same sequence of places. The finished calculation lists their ids. The count cannot exceed the number of travelers. Their report times stay independent unless companions travel together.</dd>
+            <dt>Companions travel together</dt>
+            <dd>When checked, the companions keep the same places and the same report schedule. At each place their times differ by at most the time window, 15 minutes by default. When unchecked, companions still share the route, and each draws their own report times.</dd>
             <dt>Observation window</dt>
             <dd>Whole days in which reports may fall. Travel time is subtracted first. If the window is shorter than the trip, that traveler produces no reports.</dd>
             <dt>Mean report count</dt>
@@ -211,6 +227,15 @@
     </section>
     <p class="footer">Calculation is FRACTALRABBIT, R. W. R. Darling. The generator algorithm is unchanged.</p>
 </main>
+<script>
+    const travelTogether = document.getElementById("travelTogether");
+    const togetherFields = document.getElementById("together-fields");
+    const syncTogether = () => {
+        togetherFields.hidden = !travelTogether.checked;
+    };
+    travelTogether.addEventListener("change", syncTogether);
+    syncTogether();
+</script>
 <script th:if="${requests.?[status.name() == 'PENDING' or status.name() == 'RUNNING'].size() > 0}">
     window.setTimeout(() => window.location.reload(), 3000);
 </script>

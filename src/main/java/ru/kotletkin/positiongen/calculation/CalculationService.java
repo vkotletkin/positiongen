@@ -61,6 +61,8 @@ public class CalculationService {
         applyPlaces(entity, request);
         entity.setTravelerCount(request.getTravelerCount());
         entity.setCoTravelerCount(request.getCoTravelerCount());
+        entity.setTravelTogether(request.isTravelTogether());
+        entity.setTogetherMinutes(request.getTogetherMinutes());
         entity.setDays(request.getDays());
         entity.setMeanReportCount(request.getMeanReportCount());
         entity.setRestartRate(request.getRestartRate());

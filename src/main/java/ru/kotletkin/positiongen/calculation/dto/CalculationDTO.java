@@ -17,6 +17,8 @@ public record CalculationDTO(
         boolean suppliedPlaces,
         int travelerCount,
         int coTravelerCount,
+        boolean travelTogether,
+        int togetherMinutes,
         int days,
         int meanReportCount,
         double restartRate,

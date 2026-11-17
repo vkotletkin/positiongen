@@ -134,7 +134,22 @@ public class FractalRabbitCalculator {
         PoissonVariate countRandom = new PoissonVariate(request.meanReportCount());
         Map<Integer, List<Double>> reportTimes = new HashMap<>();
         Map<Integer, List<Integer>> reportPlaces = new HashMap<>();
+        Set<Integer> companions = new HashSet<>(assignment.coTravelerIds());
+        boolean together = request.travelTogether() && companions.size() > 1;
+        if (together) {
+            shareCompanionReports(
+                    request,
+                    reporter,
+                    trajectories.getFirst(),
+                    countRandom.generate(),
+                    companions,
+                    reportTimes,
+                    reportPlaces);
+        }
         for (Map.Entry<Integer, Integer> entry : trajectoryAssignment.entrySet()) {
+            if (together && companions.contains(entry.getKey())) {
+                continue;
+            }
             List<Integer> visits = trajectories.get(entry.getValue());
             reporter.embedTrajectory(visits);
             reporter.generateReports(
@@ -162,6 +177,36 @@ public class FractalRabbitCalculator {
             deleteQuietly(placesCsv);
             deleteQuietly(directory);
             throw ex;
+        }
+    }
+
+    private void shareCompanionReports(final SimulationRequest request,
+                                       final SporadicReporter reporter,
+                                       final List<Integer> visits,
+                                       final int reportCount,
+                                       final Set<Integer> companions,
+                                       final Map<Integer, List<Double>> reportTimes,
+                                       final Map<Integer, List<Integer>> reportPlaces) {
+        reporter.embedTrajectory(visits);
+        reporter.generateReports(
+                visits,
+                reportCount,
+                request.reportDelta(),
+                request.reportAlpha(),
+                request.days());
+        List<Double> baseTimes = List.copyOf(reporter.getReportTimes());
+        List<Integer> basePlaces = List.copyOf(reporter.getReportPlaces());
+        double halfWindowDays = request.togetherMinutes() / 2880.0;
+        for (int travelerId : companions) {
+            List<Double> shifted = new ArrayList<>();
+            for (double time : baseTimes) {
+                double offset = (random.nextDouble() * 2.0 - 1.0) * halfWindowDays;
+                double low = Math.max(0.0, time - halfWindowDays);
+                double high = Math.min(request.days(), time + halfWindowDays);
+                shifted.add(Math.min(high, Math.max(low, time + offset)));
+            }
+            reportTimes.put(travelerId, List.copyOf(shifted));
+            reportPlaces.put(travelerId, basePlaces);
         }
     }
 

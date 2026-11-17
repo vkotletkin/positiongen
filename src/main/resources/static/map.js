@@ -25,7 +25,15 @@ map.setView([Number(root.dataset.originLat), Number(root.dataset.originLon)], 8)
 const layers = L.layerGroup().addTo(map);
 const travelers = new Map();
 const reportsByPlace = new Map();
+const placeCard = document.createElement("aside");
+placeCard.className = "place-card";
+placeCard.hidden = true;
+L.DomEvent.disableClickPropagation(placeCard);
+L.DomEvent.disableScrollPropagation(placeCard);
+root.appendChild(placeCard);
 let selectedIds = null;
+let openMarker = null;
+let placeClick = false;
 
 function placeKey(xKm, yKm) {
     return `${Number(xKm).toFixed(5)}|${Number(yKm).toFixed(5)}`;
@@ -140,10 +148,12 @@ async function draw() {
                 fillOpacity: 0.95
             }).addTo(layers);
             marker.placeKey = key;
-            marker.on("click", () => {
+            marker.on("click", (event) => {
+                L.DomEvent.stopPropagation(event);
                 if (selectedIds !== null && !selectedIds.has(travelerId)) {
                     return;
                 }
+                placeClick = true;
                 showPlaceTimes(marker);
             });
             const element = marker.getElement();
@@ -169,6 +179,7 @@ async function draw() {
         item.addEventListener("click", () => selectTraveler(travelerId));
         legend.appendChild(item);
     }
+    map.invalidateSize();
     if (bounds.length === 1) {
         map.setView(bounds[0], 12);
     } else if (bounds.length > 1) {
@@ -215,7 +226,9 @@ function sharedPlaceKeysFor(ids) {
 }
 
 function clearPlaceTimes() {
-    map.closePopup();
+    openMarker = null;
+    placeCard.hidden = true;
+    placeCard.replaceChildren();
 }
 
 function showPlaceTimes(marker) {
@@ -223,18 +236,26 @@ function showPlaceTimes(marker) {
     const ids = selectedIds === null
         ? [...new Set(reports.map((report) => report.travelerId))].sort((left, right) => left - right)
         : [...selectedIds].sort((left, right) => left - right);
-    const content = document.createElement("div");
-    content.className = "place-times";
+    openMarker = marker;
+    placeCard.replaceChildren();
+    const header = document.createElement("header");
     const heading = document.createElement("h2");
     heading.textContent = "Times at this place";
-    content.appendChild(heading);
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "close";
+    close.setAttribute("aria-label", "Close");
+    close.textContent = "×";
+    close.addEventListener("click", clearPlaceTimes);
+    header.append(heading, close);
+    placeCard.appendChild(header);
     const where = document.createElement("p");
     where.className = "hint";
     const sample = reports[0];
     where.textContent = sample
         ? `x ${sample.xKm.toFixed(2)} km, y ${sample.yKm.toFixed(2)} km`
         : "";
-    content.appendChild(where);
+    placeCard.appendChild(where);
     for (const id of ids) {
         const times = reports
             .filter((report) => report.travelerId === id)
@@ -259,17 +280,30 @@ function showPlaceTimes(marker) {
             }
             article.appendChild(list);
         }
-        content.appendChild(article);
+        placeCard.appendChild(article);
     }
-    L.popup({
-        className: "place-popup",
-        maxWidth: 320,
-        autoPan: true,
-        closeButton: true
-    })
-        .setLatLng(marker.getLatLng())
-        .setContent(content)
-        .openOn(map);
+    placeCard.hidden = false;
+    positionPlaceCard();
+}
+
+function positionPlaceCard() {
+    if (placeCard.hidden || !openMarker) {
+        return;
+    }
+    const point = map.latLngToContainerPoint(openMarker.getLatLng());
+    const margin = 12;
+    const gap = 14;
+    const width = placeCard.offsetWidth;
+    const height = placeCard.offsetHeight;
+    const maxLeft = Math.max(margin, root.clientWidth - width - margin);
+    const maxTop = Math.max(margin, root.clientHeight - height - margin);
+    let left = point.x + gap;
+    if (left > maxLeft) {
+        left = point.x - width - gap;
+    }
+    let top = point.y - 28;
+    placeCard.style.left = `${Math.min(Math.max(left, margin), maxLeft)}px`;
+    placeCard.style.top = `${Math.min(Math.max(top, margin), maxTop)}px`;
 }
 
 function applySelection() {
@@ -349,5 +383,14 @@ function toggleCompanionTracks() {
 }
 
 companionTracks.addEventListener("click", toggleCompanionTracks);
+map.on("click", () => {
+    if (placeClick) {
+        placeClick = false;
+        return;
+    }
+    clearPlaceTimes();
+});
+map.on("move zoom resize", positionPlaceCard);
+window.addEventListener("resize", () => map.invalidateSize());
 
 await poll();

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${calculation.label != null ? calculation.label : 'Map'} + ' — Positiongen'">Map</title>
     <link rel="stylesheet" th:href="@{/vendor/leaflet/leaflet.css}">
-    <link rel="stylesheet" th:href="@{/app.css}">
+    <link rel="stylesheet" th:href="@{/app.css(v='place-card')}">
 </head>
 <body>
 <div class="map-page">
@@ -22,6 +22,7 @@
             <li th:unless="${calculation.suppliedPlaces}" th:text="|Dimension ${calculation.dimension}, fractal ${calculation.fractalDimension}|"></li>
             <li th:text="|Places ${calculation.pointCount}|"></li>
             <li th:text="|Travelers ${calculation.travelerCount}, companions on one route ${calculation.coTravelerCount}|"></li>
+            <li th:if="${calculation.travelTogether}" th:text="|Together within ${calculation.togetherMinutes} minutes|"></li>
             <li id="companions" th:if="${calculation.coTravelerIds != null and !#lists.isEmpty(calculation.coTravelerIds)}">
                 Companions:
                 <span th:each="companionId, stat : ${calculation.coTravelerIds}"
@@ -59,6 +60,6 @@
          th:data-companions="${calculation.coTravelerIds != null ? #strings.listJoin(calculation.coTravelerIds, ',') : ''}"></div>
 </div>
 <script th:src="@{/vendor/leaflet/leaflet.js}"></script>
-<script th:src="@{/map.js(v='place-popup')}" type="module"></script>
+<script th:src="@{/map.js(v='place-card')}" type="module"></script>
 </body>
 </html>
